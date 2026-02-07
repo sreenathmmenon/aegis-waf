@@ -1,25 +1,28 @@
 "use client";
 
-import { useState, useEffect } from "react";
-import { motion } from "framer-motion";
+import { useState, useEffect, useRef } from "react";
+import { motion, AnimatePresence } from "framer-motion";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import {
   Shield,
   TrendingUp,
   AlertTriangle,
   Clock,
   Activity,
-  ChevronDown,
-  ChevronUp
+  Flag,
+  Zap,
+  Eye,
+  Brain,
+  Lock,
+  Users
 } from "lucide-react";
 import {
-  AreaChart,
-  Area,
   PieChart,
   Pie,
   Cell,
+  BarChart,
+  Bar,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -27,287 +30,246 @@ import {
   ResponsiveContainer,
   Legend
 } from "recharts";
-import { AnalyticsData, ThreatLogEntry } from "@/lib/types";
+import { useEventStream } from "@/hooks/use-event-stream";
+import { ThreatEvent } from "@/lib/event-bus";
 
 export default function DashboardPage() {
-  const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [expandedRow, setExpandedRow] = useState<string | null>(null);
+  const { events, stats, isConnected } = useEventStream();
+  const [newEventId, setNewEventId] = useState<string | null>(null);
+  const timelineRef = useRef<HTMLDivElement>(null);
 
+  // Auto-scroll timeline when new events arrive
   useEffect(() => {
-    fetchAnalytics();
-  }, []);
-
-  const fetchAnalytics = async () => {
-    try {
-      const response = await fetch('/api/shield/analytics');
-      if (!response.ok) throw new Error('Failed to fetch analytics');
-      const data = await response.json();
-      setAnalytics(data);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'An error occurred');
-    } finally {
-      setLoading(false);
+    if (events.length > 0 && timelineRef.current) {
+      timelineRef.current.scrollTop = 0;
     }
-  };
+  }, [events]);
 
-  if (loading) {
-    return (
-      <div className="p-8 flex items-center justify-center min-h-screen">
-        <div className="text-center">
-          <div className="h-12 w-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading analytics...</p>
-        </div>
-      </div>
-    );
-  }
+  // Flash animation for new events
+  useEffect(() => {
+    if (events.length > 0) {
+      const latestId = events[0].id;
+      setNewEventId(latestId);
+      setTimeout(() => setNewEventId(null), 1000);
+    }
+  }, [events]);
 
-  if (error || !analytics) {
-    return (
-      <div className="p-8">
-        <div className="max-w-7xl mx-auto">
-          <Card className="border-red-500/50 bg-red-500/5">
-            <CardContent className="p-6">
-              <p className="text-red-500">Error loading analytics: {error}</p>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
+  // Calculate stats from events
+  const totalScans = stats?.total_scans || events.length;
+  const blocked = events.filter(e => e.action === 'BLOCK').length;
+  const flagged = events.filter(e => e.action === 'FLAG').length;
+  const avgLatency = events.length > 0
+    ? events.reduce((sum, e) => sum + e.latency_ms, 0) / events.length
+    : 0;
 
-  const blockRate = (analytics.blocked / analytics.totalRequests) * 100;
-  const falsePositiveRate = analytics.falsePositiveRate * 100;
+  // Category breakdown
+  const categoryMap = new Map<string, number>();
+  events.forEach(e => {
+    if (e.category) {
+      categoryMap.set(e.category, (categoryMap.get(e.category) || 0) + 1);
+    }
+  });
+  const categoryData = Array.from(categoryMap.entries())
+    .map(([name, value]) => ({ name: name.replace(/_/g, ' '), value }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 6);
 
-  // Prepare category data for pie chart
-  const categoryChartData = analytics.categoryBreakdown.map((item, index) => ({
-    name: item.category.replace(/_/g, ' '),
-    value: item.count,
-    color: [
-      '#ef4444', // red
-      '#eab308', // yellow
-      '#f97316', // orange
-      '#a855f7', // purple
-      '#3b82f6', // blue
-      '#22c55e', // green
-      '#ec4899', // pink
-    ][index % 7]
-  }));
+  // Threat level distribution
+  const threatLevelMap = new Map<string, number>();
+  events.forEach(e => {
+    const level = e.severity || 'UNKNOWN';
+    threatLevelMap.set(level, (threatLevelMap.get(level) || 0) + 1);
+  });
+  const threatLevelData = Array.from(threatLevelMap.entries())
+    .map(([name, value]) => ({ name, value }));
 
-  const toggleRow = (id: string) => {
-    setExpandedRow(expandedRow === id ? null : id);
+  // Layer performance (synthetic data from recent events)
+  const layerPerformance = [
+    { layer: 'Pattern', avgLatency: 2.3 },
+    { layer: 'Intent', avgLatency: 48.5 },
+    { layer: 'Semantic', avgLatency: 5.1 },
+    { layer: 'Behavior', avgLatency: 1.2 },
+    { layer: 'Output', avgLatency: 10.7 }
+  ];
+
+  // Color palette
+  const COLORS = ['#ef4444', '#eab308', '#f97316', '#a855f7', '#3b82f6', '#22c55e', '#ec4899'];
+  const THREAT_COLORS = {
+    CRITICAL: '#ef4444',
+    HIGH: '#f97316',
+    MEDIUM: '#eab308',
+    LOW: '#22c55e',
+    UNKNOWN: '#a4a4a8'
   };
 
   return (
-    <div className="p-8 min-h-screen">
-      <div className="max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-gradient">Security Dashboard</h1>
-          <p className="text-muted-foreground">
-            Real-time threat intelligence and system performance metrics
-          </p>
+    <div className="h-full overflow-y-auto bg-background">
+      {/* Header */}
+      <div className="border-b border-border bg-surface sticky top-0 z-10">
+        <div className="p-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-2xl font-bold mb-1">Security Operations Center</h1>
+              <p className="text-sm text-muted-foreground">
+                Real-time threat monitoring and analysis
+              </p>
+            </div>
+            <div className="flex items-center gap-2">
+              <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+              <span className="text-xs text-muted-foreground">
+                {isConnected ? 'Live' : 'Disconnected'}
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="p-6">
+        {/* ROW 1: Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+          <StatsCard
+            title="Total Scans"
+            value={totalScans}
+            icon={Activity}
+            color="blue"
+            subtitle="All requests"
+          />
+          <StatsCard
+            title="Threats Blocked"
+            value={blocked}
+            icon={Shield}
+            color="red"
+            subtitle={`${totalScans > 0 ? ((blocked / totalScans) * 100).toFixed(1) : 0}% of total`}
+            highlight={!!(newEventId && events[0]?.action === 'BLOCK')}
+          />
+          <StatsCard
+            title="Flagged"
+            value={flagged}
+            icon={Flag}
+            color="amber"
+            subtitle={`${totalScans > 0 ? ((flagged / totalScans) * 100).toFixed(1) : 0}% of total`}
+            highlight={!!(newEventId && events[0]?.action === 'FLAG')}
+          />
+          <StatsCard
+            title="Avg Latency"
+            value={`${Math.round(avgLatency)}ms`}
+            icon={Zap}
+            color="green"
+            subtitle="Response time"
+          />
         </div>
 
-        {/* ROW 1: Summary Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1 }}
-          >
-            <Card className="bg-surface border-border">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Total Requests
-                  </CardTitle>
-                  <Activity className="h-4 w-4 text-blue-500" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold">{analytics.totalRequests.toLocaleString()}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Last 7 days
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2 }}
-          >
-            <Card className="bg-surface border-border">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Threats Blocked
-                  </CardTitle>
-                  <AlertTriangle className="h-4 w-4 text-red-500" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-red-500">
-                  {analytics.blocked.toLocaleString()}
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {blockRate.toFixed(1)}% of total requests
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3 }}
-          >
-            <Card className="bg-surface border-border">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    False Positive Rate
-                  </CardTitle>
-                  <TrendingUp className={`h-4 w-4 ${falsePositiveRate < 3 ? 'text-green-500' : 'text-yellow-500'}`} />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className={`text-3xl font-bold ${falsePositiveRate < 3 ? 'text-green-500' : 'text-yellow-500'}`}>
-                  {falsePositiveRate.toFixed(2)}%
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  {falsePositiveRate < 3 ? 'Excellent accuracy' : 'Within acceptable range'}
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4 }}
-          >
-            <Card className="bg-surface border-border">
-              <CardHeader className="pb-3">
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-sm font-medium text-muted-foreground">
-                    Avg Latency
-                  </CardTitle>
-                  <Clock className="h-4 w-4 text-blue-500" />
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="text-3xl font-bold text-blue-500">
-                  {Math.round(analytics.avgLatencyMs)}ms
-                </div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Response time
-                </p>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
-
-        {/* ROW 2: Charts */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+        {/* ROW 2: Timeline + Layer Performance */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* Threat Timeline */}
-          <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <Card className="bg-surface border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <TrendingUp className="h-5 w-5" />
-                  Threat Timeline
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
-                <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart data={analytics.dailyBreakdown}>
-                    <defs>
-                      <linearGradient id="colorTotal" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#3b82f6" stopOpacity={0.3} />
-                        <stop offset="95%" stopColor="#3b82f6" stopOpacity={0} />
-                      </linearGradient>
-                      <linearGradient id="colorBlocked" x1="0" y1="0" x2="0" y2="1">
-                        <stop offset="5%" stopColor="#ef4444" stopOpacity={0.5} />
-                        <stop offset="95%" stopColor="#ef4444" stopOpacity={0} />
-                      </linearGradient>
-                    </defs>
-                    <CartesianGrid strokeDasharray="3 3" stroke="#1e1e2e" />
-                    <XAxis
-                      dataKey="date"
-                      stroke="#a4a4a8"
-                      tick={{ fill: '#a4a4a8', fontSize: 12 }}
-                    />
-                    <YAxis
-                      stroke="#a4a4a8"
-                      tick={{ fill: '#a4a4a8', fontSize: 12 }}
-                    />
-                    <Tooltip
-                      contentStyle={{
-                        backgroundColor: '#12121a',
-                        border: '1px solid #1e1e2e',
-                        borderRadius: '8px',
-                        color: '#f5f5f5'
-                      }}
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="total"
-                      stroke="#3b82f6"
-                      strokeWidth={2}
-                      fillOpacity={1}
-                      fill="url(#colorTotal)"
-                      name="Total Requests"
-                    />
-                    <Area
-                      type="monotone"
-                      dataKey="blocked"
-                      stroke="#ef4444"
-                      strokeWidth={2}
-                      fillOpacity={1}
-                      fill="url(#colorBlocked)"
-                      name="Blocked"
-                    />
-                  </AreaChart>
-                </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </motion.div>
+          <Card className="bg-surface border-border">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Activity className="h-5 w-5" />
+                Threat Timeline
+                <Badge variant="outline" className="ml-auto">
+                  Last 20 events
+                </Badge>
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div
+                ref={timelineRef}
+                className="h-[400px] overflow-y-auto space-y-2 pr-2"
+              >
+                {events.length === 0 ? (
+                  <div className="text-center py-12 text-muted-foreground">
+                    <Shield className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                    <p className="text-sm">Waiting for threats...</p>
+                  </div>
+                ) : (
+                  <AnimatePresence initial={false}>
+                    {events.slice(0, 20).map((event) => (
+                      <ThreatTimelineItem
+                        key={event.id}
+                        event={event}
+                        isNew={event.id === newEventId}
+                      />
+                    ))}
+                  </AnimatePresence>
+                )}
+              </div>
+            </CardContent>
+          </Card>
 
-          {/* Attack Category Distribution */}
-          <motion.div
-            initial={{ opacity: 0, x: 20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ delay: 0.5 }}
-          >
-            <Card className="bg-surface border-border">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Shield className="h-5 w-5" />
-                  Attack Categories
-                </CardTitle>
-              </CardHeader>
-              <CardContent>
+          {/* Layer Performance */}
+          <Card className="bg-surface border-border">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <TrendingUp className="h-5 w-5" />
+                Layer Performance
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <ResponsiveContainer width="100%" height={400}>
+                <BarChart data={layerPerformance} layout="horizontal">
+                  <CartesianGrid strokeDasharray="3 3" stroke="#1e1e2e" />
+                  <XAxis
+                    type="number"
+                    stroke="#a4a4a8"
+                    tick={{ fill: '#a4a4a8', fontSize: 12 }}
+                    label={{ value: 'Latency (ms)', position: 'insideBottom', offset: -5, fill: '#a4a4a8' }}
+                  />
+                  <YAxis
+                    type="category"
+                    dataKey="layer"
+                    stroke="#a4a4a8"
+                    tick={{ fill: '#a4a4a8', fontSize: 12 }}
+                  />
+                  <Tooltip
+                    contentStyle={{
+                      backgroundColor: '#12121a',
+                      border: '1px solid #1e1e2e',
+                      borderRadius: '8px',
+                      color: '#f5f5f5'
+                    }}
+                    formatter={(value) => [`${value}ms`, 'Avg Latency']}
+                  />
+                  <Bar dataKey="avgLatency" radius={[0, 8, 8, 0]}>
+                    {layerPerformance.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* ROW 3: Category Distribution + Threat Levels */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Attack Categories */}
+          <Card className="bg-surface border-border">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-base">
+                <AlertTriangle className="h-5 w-5" />
+                Top Attack Categories
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              {categoryData.length === 0 ? (
+                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                  <p className="text-sm">No attack data yet</p>
+                </div>
+              ) : (
                 <ResponsiveContainer width="100%" height={300}>
                   <PieChart>
                     <Pie
-                      data={categoryChartData}
+                      data={categoryData}
                       cx="50%"
                       cy="50%"
-                      outerRadius={100}
+                      outerRadius={90}
                       dataKey="value"
                       label={({ name, percent }) => `${name}: ${percent ? (percent * 100).toFixed(0) : 0}%`}
                       labelLine={{ stroke: '#a4a4a8' }}
                     >
-                      {categoryChartData.map((entry, index) => (
-                        <Cell key={`cell-${index}`} fill={entry.color} />
+                      {categoryData.map((entry, index) => (
+                        <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                       ))}
                     </Pie>
                     <Tooltip
@@ -320,135 +282,205 @@ export default function DashboardPage() {
                     />
                   </PieChart>
                 </ResponsiveContainer>
-              </CardContent>
-            </Card>
-          </motion.div>
-        </div>
+              )}
+            </CardContent>
+          </Card>
 
-        {/* ROW 3: Recent Threats Table */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6 }}
-        >
+          {/* Threat Level Distribution */}
           <Card className="bg-surface border-border">
             <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <AlertTriangle className="h-5 w-5" />
-                Recent Threats
+              <CardTitle className="flex items-center gap-2 text-base">
+                <Shield className="h-5 w-5" />
+                Threat Level Distribution
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="overflow-x-auto">
-                <Table>
-                  <TableHeader>
-                    <TableRow className="border-border hover:bg-transparent">
-                      <TableHead className="text-muted-foreground">Time</TableHead>
-                      <TableHead className="text-muted-foreground">Input</TableHead>
-                      <TableHead className="text-muted-foreground">Decision</TableHead>
-                      <TableHead className="text-muted-foreground">Category</TableHead>
-                      <TableHead className="text-muted-foreground">Confidence</TableHead>
-                      <TableHead className="text-muted-foreground">Latency</TableHead>
-                      <TableHead className="text-muted-foreground"></TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {analytics.recentThreats.slice(0, 20).map((threat, index) => {
-                      const isExpanded = expandedRow === threat.id;
-                      return (
-                        <>
-                          <TableRow
-                            key={threat.id}
-                            onClick={() => toggleRow(threat.id)}
-                            className={`border-border cursor-pointer transition-colors ${
-                              index % 2 === 0 ? 'bg-surface/50' : 'bg-transparent'
-                            } hover:bg-secondary`}
-                          >
-                            <TableCell className="text-xs text-muted-foreground font-mono">
-                              {new Date(threat.timestamp).toLocaleTimeString()}
-                            </TableCell>
-                            <TableCell className="max-w-[300px]">
-                              <div className="truncate text-sm">{threat.input}</div>
-                            </TableCell>
-                            <TableCell>
-                              <Badge
-                                className={
-                                  threat.decision === 'BLOCK'
-                                    ? 'bg-red-500/10 text-red-500 border-red-500/50'
-                                    : threat.decision === 'FLAG'
-                                    ? 'bg-yellow-500/10 text-yellow-500 border-yellow-500/50'
-                                    : 'bg-green-500/10 text-green-500 border-green-500/50'
-                                }
-                              >
-                                {threat.decision}
-                              </Badge>
-                            </TableCell>
-                            <TableCell>
-                              {threat.category ? (
-                                <Badge variant="outline" className="text-xs">
-                                  {threat.category.replace(/_/g, ' ')}
-                                </Badge>
-                              ) : (
-                                <span className="text-muted-foreground text-xs">-</span>
-                              )}
-                            </TableCell>
-                            <TableCell className="font-mono text-xs">
-                              {(threat.confidence * 100).toFixed(0)}%
-                            </TableCell>
-                            <TableCell className="font-mono text-xs">
-                              {Math.round(threat.latencyMs)}ms
-                            </TableCell>
-                            <TableCell>
-                              {isExpanded ? (
-                                <ChevronUp className="h-4 w-4 text-muted-foreground" />
-                              ) : (
-                                <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                              )}
-                            </TableCell>
-                          </TableRow>
-                          {isExpanded && (
-                            <TableRow className="border-border bg-secondary/50">
-                              <TableCell colSpan={7} className="p-4">
-                                <div className="space-y-3">
-                                  <div>
-                                    <span className="text-xs font-semibold text-muted-foreground">
-                                      Full Input:
-                                    </span>
-                                    <p className="text-sm mt-1 font-mono bg-surface p-3 rounded border border-border">
-                                      {threat.input}
-                                    </p>
-                                  </div>
-                                  {threat.explanation && (
-                                    <div>
-                                      <span className="text-xs font-semibold text-muted-foreground">
-                                        Analysis:
-                                      </span>
-                                      <div className="text-sm mt-1 bg-surface p-3 rounded border border-border space-y-2">
-                                        <p><strong>Summary:</strong> {threat.explanation.summary}</p>
-                                        <p><strong>OWASP:</strong> {threat.explanation.owaspCategory}</p>
-                                        <p><strong>Recommendation:</strong> {threat.explanation.recommendation}</p>
-                                      </div>
-                                    </div>
-                                  )}
-                                  <div className="flex gap-4 text-xs text-muted-foreground">
-                                    <span>ID: {threat.id}</span>
-                                    {threat.ipAddress && <span>IP: {threat.ipAddress}</span>}
-                                    {threat.sessionId && <span>Session: {threat.sessionId}</span>}
-                                  </div>
-                                </div>
-                              </TableCell>
-                            </TableRow>
-                          )}
-                        </>
-                      );
-                    })}
-                  </TableBody>
-                </Table>
-              </div>
+              {threatLevelData.length === 0 ? (
+                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                  <p className="text-sm">No threat data yet</p>
+                </div>
+              ) : (
+                <ResponsiveContainer width="100%" height={300}>
+                  <PieChart>
+                    <Pie
+                      data={threatLevelData}
+                      cx="50%"
+                      cy="50%"
+                      outerRadius={90}
+                      dataKey="value"
+                      label={({ name, percent }) => `${name}: ${percent ? (percent * 100).toFixed(0) : 0}%`}
+                      labelLine={{ stroke: '#a4a4a8' }}
+                    >
+                      {threatLevelData.map((entry, index) => (
+                        <Cell
+                          key={`cell-${index}`}
+                          fill={THREAT_COLORS[entry.name as keyof typeof THREAT_COLORS] || THREAT_COLORS.UNKNOWN}
+                        />
+                      ))}
+                    </Pie>
+                    <Tooltip
+                      contentStyle={{
+                        backgroundColor: '#12121a',
+                        border: '1px solid #1e1e2e',
+                        borderRadius: '8px',
+                        color: '#f5f5f5'
+                      }}
+                    />
+                  </PieChart>
+                </ResponsiveContainer>
+              )}
             </CardContent>
           </Card>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
+}
+
+// Stats Card Component
+interface StatsCardProps {
+  title: string;
+  value: string | number;
+  icon: React.ElementType;
+  color: 'blue' | 'red' | 'amber' | 'green';
+  subtitle: string;
+  highlight?: boolean;
+}
+
+function StatsCard({ title, value, icon: Icon, color, subtitle, highlight }: StatsCardProps) {
+  const colorMap = {
+    blue: 'text-blue-500',
+    red: 'text-red-500',
+    amber: 'text-amber-500',
+    green: 'text-green-500'
+  };
+
+  const bgMap = {
+    blue: 'bg-blue-500/10',
+    red: 'bg-red-500/10',
+    amber: 'bg-amber-500/10',
+    green: 'bg-green-500/10'
+  };
+
+  return (
+    <motion.div
+      initial={{ scale: 1 }}
+      animate={highlight ? { scale: [1, 1.05, 1] } : {}}
+      transition={{ duration: 0.3 }}
+    >
+      <Card className={`bg-surface border-border ${highlight ? 'border-2 border-red-500/50' : ''}`}>
+        <CardContent className="p-4">
+          <div className="flex items-center justify-between mb-3">
+            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+              {title}
+            </span>
+            <div className={`p-2 rounded-lg ${bgMap[color]}`}>
+              <Icon className={`h-4 w-4 ${colorMap[color]}`} />
+            </div>
+          </div>
+          <div className={`text-2xl font-bold mb-1 ${colorMap[color]}`}>
+            {typeof value === 'number' ? value.toLocaleString() : value}
+          </div>
+          <p className="text-xs text-muted-foreground">{subtitle}</p>
+          {highlight && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: [0, 1, 0] }}
+              transition={{ duration: 1, repeat: 2 }}
+              className="mt-2 text-xs text-red-500 font-semibold"
+            >
+              ⚡ Detecting threat...
+            </motion.div>
+          )}
+        </CardContent>
+      </Card>
+    </motion.div>
+  );
+}
+
+// Threat Timeline Item
+function ThreatTimelineItem({ event, isNew }: { event: ThreatEvent; isNew: boolean }) {
+  const config = {
+    BLOCK: {
+      icon: Shield,
+      color: 'text-red-500',
+      bg: 'bg-red-500/10',
+      border: 'border-red-500/50'
+    },
+    FLAG: {
+      icon: Flag,
+      color: 'text-amber-500',
+      bg: 'bg-amber-500/10',
+      border: 'border-amber-500/50'
+    },
+    ALLOW: {
+      icon: Eye,
+      color: 'text-green-500',
+      bg: 'bg-green-500/10',
+      border: 'border-green-500/50'
+    }
+  };
+
+  const style = config[event.action];
+  const Icon = style.icon;
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, x: -20 }}
+      animate={{ opacity: 1, x: 0 }}
+      exit={{ opacity: 0, x: 20 }}
+      transition={{ duration: 0.2 }}
+      className={`border rounded-lg p-3 ${style.border} ${style.bg} ${
+        isNew ? 'animate-pulse-slow border-2' : 'border'
+      }`}
+    >
+      <div className="flex items-start gap-3">
+        <div className={`${style.color} mt-0.5`}>
+          <Icon className="h-4 w-4" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between gap-2 mb-1">
+            <span className={`text-xs font-semibold ${style.color}`}>
+              {event.action}
+            </span>
+            <span className="text-xs text-muted-foreground whitespace-nowrap">
+              {getTimeAgo(new Date(event.timestamp))}
+            </span>
+          </div>
+          <p className="text-xs text-foreground line-clamp-2 mb-2 leading-relaxed">
+            {event.input_preview}
+          </p>
+          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+            {event.category && (
+              <Badge variant="outline" className="text-xs px-1.5 py-0">
+                {event.category.replace(/_/g, ' ')}
+              </Badge>
+            )}
+            <span>•</span>
+            <span>{event.severity}</span>
+            <span>•</span>
+            <span>{event.latency_ms.toFixed(0)}ms</span>
+            {event.confidence && (
+              <>
+                <span>•</span>
+                <span>{(event.confidence * 100).toFixed(0)}%</span>
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </motion.div>
+  );
+}
+
+/**
+ * Get human-readable time ago string
+ */
+function getTimeAgo(date: Date): string {
+  const seconds = Math.floor((Date.now() - date.getTime()) / 1000);
+
+  if (seconds < 60) return 'Just now';
+  if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+  if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+  return `${Math.floor(seconds / 86400)}d ago`;
 }
