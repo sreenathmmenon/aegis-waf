@@ -137,10 +137,10 @@ export default function AuditLogPage() {
 
   if (loading && !auditData) {
     return (
-      <div className="p-8 flex items-center justify-center min-h-screen">
+      <div style={{ padding: '40px 32px', display: 'flex', alignItems: 'center', justifyContent: 'center', minHeight: '100vh' }}>
         <div className="text-center">
-          <div className="h-12 w-12 border-4 border-green-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
-          <p className="text-muted-foreground">Loading audit log...</p>
+          <div className="h-12 w-12 border-4 border-emerald-500 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-zinc-500">Loading audit log...</p>
         </div>
       </div>
     );
@@ -148,10 +148,10 @@ export default function AuditLogPage() {
 
   if (error && !auditData) {
     return (
-      <div className="p-8">
-        <div className="max-w-7xl mx-auto">
+      <div style={{ padding: '40px 32px' }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto' }}>
           <Card className="border-red-500/50 bg-red-500/5">
-            <CardContent className="p-6">
+            <CardContent className="p-4">
               <p className="text-red-500">Error loading audit log: {error}</p>
             </CardContent>
           </Card>
@@ -161,61 +161,53 @@ export default function AuditLogPage() {
   }
 
   return (
-    <div className="p-8 min-h-screen">
-      <div className="max-w-7xl mx-auto">
+    <div style={{ paddingTop: 40, paddingBottom: 32, paddingLeft: 32, paddingRight: 32, minHeight: '100vh' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-gradient">Audit Log</h1>
-          <p className="text-muted-foreground">
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ fontSize: 26, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: 0 }}>Audit Log</h1>
+          <p style={{ fontSize: 13, color: '#71717a', marginTop: 4 }}>
             Complete history of security decisions and threat analysis
           </p>
         </div>
 
         {/* Summary Cards */}
         {auditData && (
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            <Card className="bg-surface border-border">
-              <CardContent className="p-4">
-                <div className="text-sm text-muted-foreground">Total Entries</div>
-                <div className="text-2xl font-bold">{auditData.pagination.totalCount}</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-surface border-border">
-              <CardContent className="p-4">
-                <div className="text-sm text-muted-foreground">Blocked</div>
-                <div className="text-2xl font-bold text-red-500">{auditData.summary.totalBlocked}</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-surface border-border">
-              <CardContent className="p-4">
-                <div className="text-sm text-muted-foreground">Flagged</div>
-                <div className="text-2xl font-bold text-yellow-500">{auditData.summary.totalFlagged}</div>
-              </CardContent>
-            </Card>
-            <Card className="bg-surface border-border">
-              <CardContent className="p-4">
-                <div className="text-sm text-muted-foreground">Avg Latency</div>
-                <div className="text-2xl font-bold text-blue-500">
-                  {Math.round(auditData.summary.averageLatency)}ms
-                </div>
-              </CardContent>
-            </Card>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-3 mb-8">
+            <div className="bg-[#18181b]/60 border border-[#27272a] rounded-lg px-4 py-3">
+              <div className="text-[11px] text-[#71717a] uppercase tracking-wider font-medium mb-1.5">Total Entries</div>
+              <div className="text-lg font-bold text-white">{auditData.pagination.totalCount}</div>
+            </div>
+            <div className="bg-[#18181b]/60 border border-[#27272a] rounded-lg px-4 py-3">
+              <div className="text-[11px] text-[#71717a] uppercase tracking-wider font-medium mb-1.5">Blocked</div>
+              <div className="text-lg font-bold text-red-500">{auditData.summary.totalBlocked}</div>
+            </div>
+            <div className="bg-[#18181b]/60 border border-[#27272a] rounded-lg px-4 py-3">
+              <div className="text-[11px] text-[#71717a] uppercase tracking-wider font-medium mb-1.5">Flagged</div>
+              <div className="text-lg font-bold text-amber-500">{auditData.summary.totalFlagged}</div>
+            </div>
+            <div className="bg-[#18181b]/60 border border-[#27272a] rounded-lg px-4 py-3">
+              <div className="text-[11px] text-[#71717a] uppercase tracking-wider font-medium mb-1.5">Avg Latency</div>
+              <div className="text-lg font-bold text-emerald-500">
+                {Math.round(auditData.summary.averageLatency)}ms
+              </div>
+            </div>
           </div>
         )}
 
         {/* Filters and Search */}
-        <Card className="bg-surface border-border mb-6">
+        <Card className="bg-[#111113] border-[#27272a] mb-8">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
+            <CardTitle className="flex items-center gap-2 text-base">
               <Filter className="h-5 w-5" />
               Filters
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-4">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
               {/* Decision Filter */}
               <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Decision</label>
+                <label className="text-[13px] text-zinc-500 mb-2 block">Decision</label>
                 <Select value={decisionFilter} onValueChange={(value) => {
                   setDecisionFilter(value);
                   setCurrentPage(1);
@@ -234,7 +226,7 @@ export default function AuditLogPage() {
 
               {/* Category Filter */}
               <div>
-                <label className="text-sm text-muted-foreground mb-2 block">Category</label>
+                <label className="text-[13px] text-zinc-500 mb-2 block">Category</label>
                 <Select value={categoryFilter} onValueChange={(value) => {
                   setCategoryFilter(value);
                   setCurrentPage(1);
@@ -257,7 +249,7 @@ export default function AuditLogPage() {
 
               {/* Search */}
               <div className="md:col-span-2">
-                <label className="text-sm text-muted-foreground mb-2 block">Search Input Text</label>
+                <label className="text-[13px] text-zinc-500 mb-2 block">Search Input Text</label>
                 <div className="flex gap-2">
                   <Input
                     placeholder="Search in inputs..."
@@ -266,7 +258,7 @@ export default function AuditLogPage() {
                     onKeyPress={handleKeyPress}
                     className="flex-1"
                   />
-                  <Button onClick={handleSearch} variant="outline" size="icon">
+                  <Button onClick={handleSearch} variant="outline" size="icon" className="border-[#27272a] bg-[#18181b]">
                     <Search className="h-4 w-4" />
                   </Button>
                 </div>
@@ -276,10 +268,10 @@ export default function AuditLogPage() {
         </Card>
 
         {/* Audit Table */}
-        <Card className="bg-surface border-border">
+        <Card className="bg-[#111113] border-[#27272a] mb-8">
           <CardHeader>
             <div className="flex items-center justify-between">
-              <CardTitle className="flex items-center gap-2">
+              <CardTitle className="flex items-center gap-2 text-base">
                 <FileText className="h-5 w-5" />
                 Audit Entries
               </CardTitle>
@@ -287,7 +279,7 @@ export default function AuditLogPage() {
                 onClick={exportToCSV}
                 variant="outline"
                 size="sm"
-                className="gap-2"
+                className="gap-2 border-[#27272a] bg-[#18181b]"
                 disabled={!auditData?.entries.length}
               >
                 <Download className="h-4 w-4" />
@@ -301,29 +293,29 @@ export default function AuditLogPage() {
                 <div className="overflow-x-auto">
                   <Table>
                     <TableHeader>
-                      <TableRow className="border-border hover:bg-transparent">
-                        <TableHead className="text-muted-foreground">Timestamp</TableHead>
-                        <TableHead className="text-muted-foreground">Input</TableHead>
-                        <TableHead className="text-muted-foreground">Decision</TableHead>
-                        <TableHead className="text-muted-foreground">Category</TableHead>
-                        <TableHead className="text-muted-foreground">Confidence</TableHead>
-                        <TableHead className="text-muted-foreground">Latency</TableHead>
-                        <TableHead className="text-muted-foreground">Session</TableHead>
+                      <TableRow className="border-[#27272a] bg-[#111113] hover:bg-transparent">
+                        <TableHead className="text-zinc-500 text-[13px]">Timestamp</TableHead>
+                        <TableHead className="text-zinc-500 text-[13px]">Input</TableHead>
+                        <TableHead className="text-zinc-500 text-[13px]">Decision</TableHead>
+                        <TableHead className="text-zinc-500 text-[13px]">Category</TableHead>
+                        <TableHead className="text-zinc-500 text-[13px]">Confidence</TableHead>
+                        <TableHead className="text-zinc-500 text-[13px]">Latency</TableHead>
+                        <TableHead className="text-zinc-500 text-[13px]">Session</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {auditData.entries.map((entry, index) => (
                         <TableRow
                           key={entry.id}
-                          className={`border-border ${
-                            index % 2 === 0 ? "bg-surface/50" : "bg-transparent"
+                          className={`border-[#27272a] ${
+                            index % 2 === 0 ? "bg-[#111113]/50" : "bg-transparent"
                           }`}
                         >
-                          <TableCell className="text-xs text-muted-foreground font-mono">
+                          <TableCell className="text-[13px] text-zinc-500 font-mono">
                             {new Date(entry.timestamp).toLocaleString()}
                           </TableCell>
                           <TableCell className="max-w-[400px]">
-                            <div className="truncate text-sm">{entry.input}</div>
+                            <div className="truncate text-[13px] text-zinc-300">{entry.input}</div>
                           </TableCell>
                           <TableCell>
                             <Badge
@@ -331,8 +323,8 @@ export default function AuditLogPage() {
                                 entry.decision === "BLOCK"
                                   ? "bg-red-500/10 text-red-500 border-red-500/50"
                                   : entry.decision === "FLAG"
-                                  ? "bg-yellow-500/10 text-yellow-500 border-yellow-500/50"
-                                  : "bg-green-500/10 text-green-500 border-green-500/50"
+                                  ? "bg-amber-500/10 text-amber-500 border-amber-500/50"
+                                  : "bg-emerald-500/10 text-emerald-500 border-emerald-500/50"
                               }
                             >
                               {entry.decision}
@@ -344,16 +336,16 @@ export default function AuditLogPage() {
                                 {entry.category.replace(/_/g, " ")}
                               </Badge>
                             ) : (
-                              <span className="text-muted-foreground text-xs">-</span>
+                              <span className="text-zinc-600 text-xs">-</span>
                             )}
                           </TableCell>
-                          <TableCell className="font-mono text-xs">
+                          <TableCell className="font-mono text-[13px] text-zinc-300">
                             {(entry.confidence * 100).toFixed(0)}%
                           </TableCell>
-                          <TableCell className="font-mono text-xs">
+                          <TableCell className="font-mono text-[13px] text-zinc-300">
                             {Math.round(entry.latencyMs)}ms
                           </TableCell>
-                          <TableCell className="font-mono text-xs text-muted-foreground">
+                          <TableCell className="font-mono text-[13px] text-zinc-500">
                             {entry.sessionId?.substring(0, 8) || "-"}
                           </TableCell>
                         </TableRow>
@@ -363,8 +355,8 @@ export default function AuditLogPage() {
                 </div>
 
                 {/* Pagination */}
-                <div className="flex items-center justify-between mt-6 pt-4 border-t border-border">
-                  <div className="text-sm text-muted-foreground">
+                <div className="flex items-center justify-between mt-6 pt-4 border-t border-[#27272a]">
+                  <div className="text-sm text-zinc-500">
                     Showing {((auditData.pagination.currentPage - 1) * auditData.pagination.pageSize) + 1} to{" "}
                     {Math.min(
                       auditData.pagination.currentPage * auditData.pagination.pageSize,
@@ -378,11 +370,12 @@ export default function AuditLogPage() {
                       size="sm"
                       onClick={() => setCurrentPage(currentPage - 1)}
                       disabled={!auditData.pagination.hasPrevious || loading}
+                      className="border-[#27272a] bg-[#18181b]"
                     >
                       <ChevronLeft className="h-4 w-4 mr-1" />
                       Previous
                     </Button>
-                    <div className="text-sm text-muted-foreground">
+                    <div className="text-sm text-zinc-500">
                       Page {auditData.pagination.currentPage} of {auditData.pagination.totalPages}
                     </div>
                     <Button
@@ -390,6 +383,7 @@ export default function AuditLogPage() {
                       size="sm"
                       onClick={() => setCurrentPage(currentPage + 1)}
                       disabled={!auditData.pagination.hasNext || loading}
+                      className="border-[#27272a] bg-[#18181b]"
                     >
                       Next
                       <ChevronRight className="h-4 w-4 ml-1" />
@@ -398,7 +392,7 @@ export default function AuditLogPage() {
                 </div>
               </>
             ) : (
-              <div className="text-center py-12 text-muted-foreground">
+              <div className="text-center py-12 text-zinc-500">
                 No audit entries found matching your filters.
               </div>
             )}

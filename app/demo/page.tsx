@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -60,8 +60,12 @@ export default function DemoPage() {
     flagged: 0,
     avgLatency: 0
   });
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Live pattern matching as user types
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages]);
+
   useEffect(() => {
     if (input.length < 3) {
       setLiveHints([]);
@@ -69,29 +73,26 @@ export default function DemoPage() {
     }
 
     const hints: string[] = [];
-    const lowerInput = input.toLowerCase();
 
-    // Check for common attack patterns
     if (/ignore|disregard|forget/i.test(input)) {
-      hints.push('⚠️ Instruction override detected');
+      hints.push('Instruction override detected');
     }
     if (/system prompt|instructions|training/i.test(input)) {
-      hints.push('⚠️ System prompt extraction attempt');
+      hints.push('System prompt extraction attempt');
     }
     if (/base64|encode|decode/i.test(input)) {
-      hints.push('⚠️ Encoding-based evasion detected');
+      hints.push('Encoding-based evasion detected');
     }
     if (/DAN|jailbreak|unrestricted/i.test(input)) {
-      hints.push('⚠️ Role manipulation detected');
+      hints.push('Role manipulation detected');
     }
     if (/reveal|expose|leak|confidential/i.test(input)) {
-      hints.push('⚠️ Data extraction attempt');
+      hints.push('Data extraction attempt');
     }
 
     setLiveHints(hints);
   }, [input]);
 
-  // Handle send message
   const handleSend = async () => {
     if (!input.trim() || isAnalyzing) return;
 
@@ -108,7 +109,6 @@ export default function DemoPage() {
     setIsAnalyzing(true);
 
     try {
-      // Call validation API
       const response = await fetch('/api/shield/validate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -120,7 +120,6 @@ export default function DemoPage() {
 
       const validation: ValidationResult = await response.json();
 
-      // Update stats
       setStats(prev => ({
         processed: prev.processed + 1,
         blocked: prev.blocked + (validation.decision === 'BLOCK' ? 1 : 0),
@@ -130,101 +129,54 @@ export default function DemoPage() {
           : (prev.avgLatency * prev.processed + validation.latencyMs) / (prev.processed + 1)
       }));
 
-      // System response based on decision
       if (validation.decision === 'BLOCK') {
         const systemMessage: Message = {
           id: `msg_${Date.now()}_sys`,
           type: 'system',
-          content: '🛡️ Request blocked by AEGIS',
+          content: 'Request blocked by AEGIS',
           validation,
           timestamp: new Date(),
-          slackAlertSent: true // Slack alert fires on BLOCK
+          slackAlertSent: true
         };
         setMessages(prev => [...prev, systemMessage]);
       } else if (validation.decision === 'FLAG') {
         const systemMessage: Message = {
           id: `msg_${Date.now()}_sys`,
           type: 'system',
-          content: '⚠️ Request flagged as suspicious but allowed',
+          content: 'Request flagged as suspicious but allowed',
           validation,
           timestamp: new Date(),
-          slackAlertSent: true // Slack alert fires on FLAG
+          slackAlertSent: true
         };
         setMessages(prev => [...prev, systemMessage]);
 
-        // Add real LLM response (protected by AEGIS)
-        setTimeout(async () => {
-          try {
-            const llmResponse = await fetch('/api/llm/chat', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                message: input,
-                provider: process.env.NEXT_PUBLIC_LLM_PROVIDER || 'openai'
-              })
-            });
-
-            const llmData = await llmResponse.json();
-
-            const llmMessage: Message = {
-              id: `msg_${Date.now()}_llm`,
-              type: 'llm',
-              content: llmData.response || llmData.error || 'Error generating response',
-              timestamp: new Date()
-            };
-            setMessages(prev => [...prev, llmMessage]);
-          } catch (error) {
-            console.error('LLM error:', error);
-            const errorMessage: Message = {
-              id: `msg_${Date.now()}_llm`,
-              type: 'llm',
-              content: 'Error: Unable to generate response',
-              timestamp: new Date()
-            };
-            setMessages(prev => [...prev, errorMessage]);
-          }
+        setTimeout(() => {
+          const llmMessage: Message = {
+            id: `msg_${Date.now()}_llm`,
+            type: 'llm',
+            content: generateMockResponse(input),
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, llmMessage]);
         }, 500);
       } else {
-        // ALLOW - add system message + LLM response
         const systemMessage: Message = {
           id: `msg_${Date.now()}_sys`,
           type: 'system',
-          content: '✅ Request allowed',
+          content: 'Request allowed',
           validation,
           timestamp: new Date()
         };
         setMessages(prev => [...prev, systemMessage]);
 
-        setTimeout(async () => {
-          try {
-            const llmResponse = await fetch('/api/llm/chat', {
-              method: 'POST',
-              headers: { 'Content-Type': 'application/json' },
-              body: JSON.stringify({
-                message: input,
-                provider: process.env.NEXT_PUBLIC_LLM_PROVIDER || 'openai'
-              })
-            });
-
-            const llmData = await llmResponse.json();
-
-            const llmMessage: Message = {
-              id: `msg_${Date.now()}_llm`,
-              type: 'llm',
-              content: llmData.response || llmData.error || 'Error generating response',
-              timestamp: new Date()
-            };
-            setMessages(prev => [...prev, llmMessage]);
-          } catch (error) {
-            console.error('LLM error:', error);
-            const errorMessage: Message = {
-              id: `msg_${Date.now()}_llm`,
-              type: 'llm',
-              content: 'Error: Unable to generate response',
-              timestamp: new Date()
-            };
-            setMessages(prev => [...prev, errorMessage]);
-          }
+        setTimeout(() => {
+          const llmMessage: Message = {
+            id: `msg_${Date.now()}_llm`,
+            type: 'llm',
+            content: generateMockResponse(input),
+            timestamp: new Date()
+          };
+          setMessages(prev => [...prev, llmMessage]);
         }, 500);
       }
     } catch (error) {
@@ -232,7 +184,7 @@ export default function DemoPage() {
       const errorMessage: Message = {
         id: `msg_${Date.now()}_err`,
         type: 'system',
-        content: '❌ Error analyzing request',
+        content: 'Error analyzing request',
         timestamp: new Date()
       };
       setMessages(prev => [...prev, errorMessage]);
@@ -255,180 +207,150 @@ export default function DemoPage() {
     });
   };
 
-  return (
-    <div className="h-full flex flex-col bg-background">
-      {/* Header */}
-      <div className="border-b border-border bg-surface">
-        <div className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold mb-1">Live Demo</h1>
-              <p className="text-sm text-muted-foreground">
-                Interactive chat showing AEGIS threat analysis in real-time
-              </p>
-            </div>
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleClear}
-              className="border-border"
-            >
-              Clear Chat
-            </Button>
-          </div>
+  const lastValidation = messages.length > 0
+    ? [...messages].reverse().find(m => m.validation)?.validation
+    : undefined;
 
-          {/* Stats Bar */}
-          <div className="mt-6 grid grid-cols-2 md:grid-cols-4 gap-4">
-            <Card className="bg-background/50 border-border p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <Activity className="h-4 w-4 text-blue-500" />
-                <span className="text-xs text-muted-foreground">Processed</span>
-              </div>
-              <div className="text-2xl font-bold">{stats.processed}</div>
-            </Card>
-            <Card className="bg-background/50 border-border p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <Shield className="h-4 w-4 text-red-500" />
-                <span className="text-xs text-muted-foreground">Blocked</span>
-              </div>
-              <div className="text-2xl font-bold text-red-500">{stats.blocked}</div>
-            </Card>
-            <Card className="bg-background/50 border-border p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <Flag className="h-4 w-4 text-amber-500" />
-                <span className="text-xs text-muted-foreground">Flagged</span>
-              </div>
-              <div className="text-2xl font-bold text-amber-500">{stats.flagged}</div>
-            </Card>
-            <Card className="bg-background/50 border-border p-4">
-              <div className="flex items-center gap-2 mb-1">
-                <Zap className="h-4 w-4 text-green-500" />
-                <span className="text-xs text-muted-foreground">Avg Latency</span>
-              </div>
-              <div className="text-2xl font-bold">{Math.round(stats.avgLatency)}ms</div>
-            </Card>
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', height: 'calc(100vh - 57px)' }}>
+      {/* Stats Strip */}
+      <div style={{ borderBottom: '1px solid #27272a', background: 'rgba(17,17,19,0.5)', padding: '12px 32px', flexShrink: 0 }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 32 }}>
+            <StatItem icon={<Activity style={{ width: 14, height: 14, color: '#3b82f6' }} />} label="Processed" value={stats.processed} color="#fff" />
+            <StatItem icon={<Shield style={{ width: 14, height: 14, color: '#ef4444' }} />} label="Blocked" value={stats.blocked} color="#ef4444" />
+            <StatItem icon={<Flag style={{ width: 14, height: 14, color: '#f59e0b' }} />} label="Flagged" value={stats.flagged} color="#f59e0b" />
+            <StatItem icon={<Zap style={{ width: 14, height: 14, color: '#10b981' }} />} label="Latency" value={`${Math.round(stats.avgLatency)}ms`} color="#fff" />
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={handleClear}
+            className="border-[#27272a] bg-[#18181b] hover:bg-[#27272a] text-zinc-400 text-[12px] h-7"
+          >
+            Clear Chat
+          </Button>
         </div>
       </div>
 
-      {/* Main Content - Split Screen */}
-      <div className="flex-1 grid grid-cols-1 lg:grid-cols-2 gap-0 overflow-hidden">
-        {/* Left: Chat Interface */}
-        <div className="flex flex-col border-r border-border">
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto p-6 space-y-4">
-            {messages.length === 0 && (
-              <div className="text-center text-muted-foreground py-12">
-                <Shield className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="text-sm">Start typing to test AEGIS protection</p>
+      {/* Main Two-Column Layout */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden', flexWrap: 'wrap' as const }}>
+
+        {/* LEFT: Chat Panel */}
+        <div style={{ flex: '1 1 400px', display: 'flex', flexDirection: 'column', borderRight: '1px solid #1e1e24', minWidth: 0 }}>
+
+          {/* Messages Area */}
+          <div style={{ flex: 1, overflowY: 'auto', padding: 24 }}>
+            {messages.length === 0 ? (
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', opacity: 0.4 }}>
+                <Shield style={{ width: 40, height: 40, color: '#71717a', marginBottom: 12 }} />
+                <p style={{ fontSize: 13, color: '#71717a' }}>Send a message to test AEGIS protection</p>
               </div>
-            )}
+            ) : (
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+                <AnimatePresence>
+                  {messages.map((message) => (
+                    <MessageBubble key={message.id} message={message} />
+                  ))}
+                </AnimatePresence>
 
-            <AnimatePresence>
-              {messages.map((message) => (
-                <MessageBubble key={message.id} message={message} />
-              ))}
-            </AnimatePresence>
-
-            {isAnalyzing && (
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="flex items-center gap-2 text-muted-foreground"
-              >
-                <Loader2 className="h-4 w-4 animate-spin" />
-                <span className="text-sm">Analyzing threat...</span>
-              </motion.div>
+                {isAnalyzing && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#71717a' }}
+                  >
+                    <Loader2 style={{ width: 14, height: 14, animation: 'spin 1s linear infinite' }} />
+                    <span style={{ fontSize: 13 }}>Analyzing threat...</span>
+                  </motion.div>
+                )}
+                <div ref={messagesEndRef} />
+              </div>
             )}
           </div>
 
           {/* Live Hints */}
           {liveHints.length > 0 && (
-            <div className="px-6 pb-2">
-              <div className="bg-amber-500/10 border border-amber-500/50 rounded-lg p-3">
-                <div className="text-xs font-medium text-amber-500 mb-1">
-                  Live Pattern Detection
+            <div style={{ padding: '0 24px 8px' }}>
+              <div style={{ background: 'rgba(245,158,11,0.08)', border: '1px solid rgba(245,158,11,0.3)', borderRadius: 8, padding: 10 }}>
+                <div style={{ fontSize: 11, fontWeight: 600, color: '#f59e0b', marginBottom: 4, textTransform: 'uppercase', letterSpacing: '0.05em' }}>
+                  Live Detection
                 </div>
-                <div className="space-y-1">
-                  {liveHints.map((hint, i) => (
-                    <div key={i} className="text-xs text-amber-400">
-                      {hint}
-                    </div>
-                  ))}
-                </div>
+                {liveHints.map((hint, i) => (
+                  <div key={i} style={{ fontSize: 12, color: '#fbbf24', display: 'flex', alignItems: 'center', gap: 6 }}>
+                    <AlertTriangle style={{ width: 11, height: 11 }} />
+                    {hint}
+                  </div>
+                ))}
               </div>
             </div>
           )}
 
-          {/* Input Area */}
-          <div className="p-6 border-t border-border bg-surface">
-            <div className="flex gap-2">
+          {/* Input + Presets */}
+          <div style={{ borderTop: '1px solid #1e1e24', padding: 20, background: '#111113', flexShrink: 0 }}>
+            <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
               <Input
                 value={input}
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={(e) => e.key === 'Enter' && handleSend()}
                 placeholder="Type a message to test AEGIS..."
-                className="flex-1 bg-background border-border"
+                className="flex-1 bg-[#09090b] border-[#27272a] text-[13px] text-zinc-300"
                 disabled={isAnalyzing}
               />
               <Button
                 onClick={handleSend}
                 disabled={!input.trim() || isAnalyzing}
-                className="bg-green-600 hover:bg-green-700"
+                style={{ background: '#059669', color: '#fff', height: 40, width: 48, minWidth: 48, display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: 8, border: 'none', cursor: 'pointer', flexShrink: 0 }}
               >
-                <Send className="h-4 w-4" />
+                <Send style={{ width: 16, height: 16 }} />
               </Button>
             </div>
 
-            {/* Preset Buttons */}
-            <div className="mt-4">
-              <div className="text-xs text-muted-foreground mb-2">Try these attacks:</div>
-              <div className="flex flex-wrap gap-2">
-                {PRESET_ATTACKS.slice(0, 3).map((preset, i) => (
-                  <Button
-                    key={i}
-                    variant="outline"
-                    size="sm"
+            {/* Presets */}
+            <div style={{ marginBottom: 6 }}>
+              <div style={{ fontSize: 11, color: '#52525b', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 500 }}>Try attack patterns:</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
+                {PRESET_ATTACKS.map((preset, i) => (
+                  <button
+                    key={`atk-${i}`}
                     onClick={() => handlePresetClick(preset)}
-                    className="text-xs border-red-500/30 hover:bg-red-500/10"
                     disabled={isAnalyzing}
+                    style={{ fontSize: 11, padding: '4px 10px', borderRadius: 6, border: '1px solid rgba(239,68,68,0.25)', background: 'rgba(239,68,68,0.06)', color: '#fca5a5', cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220 }}
                   >
-                    {preset.substring(0, 30)}...
-                  </Button>
+                    {preset.substring(0, 32)}...
+                  </button>
                 ))}
               </div>
-              <div className="text-xs text-muted-foreground mt-2 mb-2">Or safe inputs:</div>
-              <div className="flex flex-wrap gap-2">
+            </div>
+            <div>
+              <div style={{ fontSize: 11, color: '#52525b', marginBottom: 6, textTransform: 'uppercase', letterSpacing: '0.04em', fontWeight: 500 }}>Or safe inputs:</div>
+              <div style={{ display: 'flex', flexWrap: 'wrap', gap: 5 }}>
                 {PRESET_SAFE.map((preset, i) => (
-                  <Button
-                    key={i}
-                    variant="outline"
-                    size="sm"
+                  <button
+                    key={`safe-${i}`}
                     onClick={() => handlePresetClick(preset)}
-                    className="text-xs border-green-500/30 hover:bg-green-500/10"
                     disabled={isAnalyzing}
+                    style={{ fontSize: 11, padding: '4px 10px', borderRadius: 6, border: '1px solid rgba(16,185,129,0.25)', background: 'rgba(16,185,129,0.06)', color: '#6ee7b7', cursor: 'pointer', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: 220 }}
                   >
-                    {preset}
-                  </Button>
+                    {preset.substring(0, 38)}...
+                  </button>
                 ))}
               </div>
             </div>
           </div>
         </div>
 
-        {/* Right: Analysis Panel */}
-        <div className="flex flex-col overflow-y-auto p-6 bg-surface/50">
-          {messages.length > 0 ? (
-            <AnalysisPanel
-              validation={messages[messages.length - 1].validation}
-              isAnalyzing={isAnalyzing}
-            />
+        {/* RIGHT: Analysis Panel */}
+        <div style={{ flex: '1 1 400px', overflowY: 'auto', padding: 24, background: '#0d0d11', minWidth: 0 }}>
+          {lastValidation ? (
+            <AnalysisPanel validation={lastValidation} isAnalyzing={isAnalyzing} />
+          ) : isAnalyzing ? (
+            <AnalysisPanel validation={undefined} isAnalyzing={true} />
           ) : (
-            <div className="flex items-center justify-center h-full text-center text-muted-foreground">
-              <div>
-                <TrendingUp className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                <p className="text-sm">Analysis results will appear here</p>
-              </div>
+            <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100%', opacity: 0.35 }}>
+              <TrendingUp style={{ width: 40, height: 40, color: '#71717a', marginBottom: 12 }} />
+              <p style={{ fontSize: 14, color: '#71717a', fontWeight: 500 }}>Analysis results will appear here</p>
+              <p style={{ fontSize: 12, color: '#52525b', marginTop: 4 }}>Send a message to see the defense layers in action</p>
             </div>
           )}
         </div>
@@ -437,36 +359,44 @@ export default function DemoPage() {
   );
 }
 
-// Message Bubble Component
+function StatItem({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: string | number; color: string }) {
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+      {icon}
+      <div>
+        <div style={{ fontSize: 10, color: '#52525b', textTransform: 'uppercase', letterSpacing: '0.06em', fontWeight: 500, lineHeight: 1 }}>{label}</div>
+        <div style={{ fontSize: 16, fontWeight: 700, color, lineHeight: 1.3 }}>{value}</div>
+      </div>
+    </div>
+  );
+}
+
 function MessageBubble({ message }: { message: Message }) {
   const isUser = message.type === 'user';
   const isSystem = message.type === 'system';
-  const isLLM = message.type === 'llm';
+
+  const bubbleStyle: React.CSSProperties = isUser
+    ? { background: '#059669', color: '#fff', marginLeft: 'auto', maxWidth: '80%' }
+    : isSystem
+    ? { background: '#111113', border: '1px solid #27272a', maxWidth: '80%' }
+    : { background: 'rgba(59,130,246,0.08)', border: '1px solid rgba(59,130,246,0.2)', maxWidth: '80%' };
 
   return (
     <motion.div
-      initial={{ opacity: 0, y: 10 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -10 }}
-      className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
+      exit={{ opacity: 0 }}
+      style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start' }}
     >
-      <div
-        className={`max-w-[80%] rounded-lg p-3 ${
-          isUser
-            ? 'bg-green-600 text-white'
-            : isSystem
-            ? 'bg-surface border border-border'
-            : 'bg-blue-600/10 border border-blue-500/30'
-        }`}
-      >
-        <div className="text-sm whitespace-pre-wrap break-words">{message.content}</div>
+      <div style={{ ...bubbleStyle, borderRadius: 10, padding: '10px 14px' }}>
+        <div style={{ fontSize: 13, whiteSpace: 'pre-wrap', wordBreak: 'break-word', lineHeight: 1.5 }}>{message.content}</div>
         {message.validation && (
-          <div className="mt-2 pt-2 border-t border-border/50 space-y-2">
+          <div style={{ marginTop: 8, paddingTop: 8, borderTop: '1px solid rgba(39,39,42,0.5)' }}>
             <DecisionBadge decision={message.validation.decision} />
             {message.slackAlertSent && (
-              <div className="flex items-center gap-1.5 text-xs text-cyan-400">
-                <Send className="h-3 w-3" />
-                <span>Alert sent to Slack</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: 6, fontSize: 11, color: '#22d3ee', marginTop: 6 }}>
+                <Send style={{ width: 10, height: 10 }} />
+                Alert sent to Slack
               </div>
             )}
           </div>
@@ -476,26 +406,24 @@ function MessageBubble({ message }: { message: Message }) {
   );
 }
 
-// Decision Badge
 function DecisionBadge({ decision }: { decision: 'ALLOW' | 'FLAG' | 'BLOCK' }) {
   const config = {
-    ALLOW: { icon: CheckCircle2, color: 'text-green-500', bg: 'bg-green-500/10', border: 'border-green-500/50' },
-    FLAG: { icon: Flag, color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/50' },
-    BLOCK: { icon: Shield, color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/50' }
+    ALLOW: { icon: CheckCircle2, color: '#10b981', bg: 'rgba(16,185,129,0.1)', border: 'rgba(16,185,129,0.4)' },
+    FLAG: { icon: Flag, color: '#f59e0b', bg: 'rgba(245,158,11,0.1)', border: 'rgba(245,158,11,0.4)' },
+    BLOCK: { icon: Shield, color: '#ef4444', bg: 'rgba(239,68,68,0.1)', border: 'rgba(239,68,68,0.4)' }
   };
 
   const style = config[decision];
   const Icon = style.icon;
 
   return (
-    <div className={`inline-flex items-center gap-1 px-2 py-1 rounded ${style.bg} ${style.border} border`}>
-      <Icon className={`h-3 w-3 ${style.color}`} />
-      <span className={`text-xs font-semibold ${style.color}`}>{decision}</span>
+    <div style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '4px 10px', borderRadius: 6, background: style.bg, border: `1px solid ${style.border}` }}>
+      <Icon style={{ width: 13, height: 13, color: style.color }} />
+      <span style={{ fontSize: 12, fontWeight: 600, color: style.color }}>{decision}</span>
     </div>
   );
 }
 
-// Analysis Panel Component
 function AnalysisPanel({
   validation,
   isAnalyzing
@@ -503,142 +431,145 @@ function AnalysisPanel({
   validation?: ValidationResult;
   isAnalyzing: boolean;
 }) {
-  if (isAnalyzing) {
+  if (isAnalyzing && !validation) {
     return (
-      <div className="space-y-4">
-        <h2 className="text-lg font-semibold mb-4">Threat Analysis</h2>
-        {['pattern', 'intent', 'semantic', 'behavior'].map((layer, i) => (
-          <Card key={layer} className="bg-background border-border p-4">
-            <div className="flex items-center gap-3">
-              <Loader2 className="h-5 w-5 animate-spin text-blue-500" />
-              <div className="flex-1">
-                <div className="font-medium capitalize">{layer} Layer</div>
-                <div className="text-sm text-muted-foreground">Analyzing...</div>
+      <div>
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#fff', marginBottom: 16 }}>Threat Analysis</h2>
+        {['Pattern', 'Intent', 'Semantic', 'Behavior'].map((layer) => (
+          <div key={layer} style={{ background: '#111113', border: '1px solid #27272a', borderRadius: 8, padding: 14, marginBottom: 8 }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+              <Loader2 style={{ width: 14, height: 14, color: '#3b82f6', animation: 'spin 1s linear infinite' }} />
+              <div>
+                <div style={{ fontSize: 13, fontWeight: 500, color: '#fff' }}>{layer} Layer</div>
+                <div style={{ fontSize: 12, color: '#52525b' }}>Analyzing...</div>
               </div>
             </div>
-          </Card>
+          </div>
         ))}
       </div>
     );
   }
 
-  if (!validation) {
-    return null;
-  }
+  if (!validation) return null;
 
   return (
-    <div className="space-y-4">
-      <div>
-        <h2 className="text-lg font-semibold mb-1">Threat Analysis</h2>
-        <p className="text-sm text-muted-foreground">
-          Layer-by-layer breakdown of security checks
-        </p>
+    <div>
+      <div style={{ marginBottom: 20 }}>
+        <h2 style={{ fontSize: 16, fontWeight: 600, color: '#fff', margin: 0 }}>Threat Analysis</h2>
+        <p style={{ fontSize: 12, color: '#52525b', marginTop: 2 }}>Layer-by-layer breakdown</p>
       </div>
 
       {/* Overall Decision */}
-      <Card className="bg-background border-border p-4">
-        <div className="flex items-center justify-between mb-3">
-          <span className="text-sm font-medium">Final Decision</span>
+      <div style={{ background: '#111113', border: '1px solid #27272a', borderRadius: 10, padding: 16, marginBottom: 16 }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 14 }}>
+          <span style={{ fontSize: 13, fontWeight: 500, color: '#a1a1aa' }}>Final Decision</span>
           <DecisionBadge decision={validation.decision} />
         </div>
-        <div className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Confidence</span>
-            <span className="font-medium">{(validation.confidence * 100).toFixed(0)}%</span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Threat Level</span>
-            <span className={`font-medium ${getThreatColor(validation.threatLevel)}`}>
-              {validation.threatLevel}
-            </span>
-          </div>
-          <div className="flex justify-between">
-            <span className="text-muted-foreground">Latency</span>
-            <span className="font-medium">{validation.latencyMs}ms</span>
-          </div>
-          {validation.category && (
-            <div className="flex justify-between">
-              <span className="text-muted-foreground">Category</span>
-              <span className="font-medium">{validation.category.replace(/_/g, ' ')}</span>
-            </div>
-          )}
+        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '10px 20px' }}>
+          <InfoRow label="Confidence" value={`${(validation.confidence * 100).toFixed(0)}%`} />
+          <InfoRow label="Threat Level" value={validation.threatLevel} valueColor={getThreatColor(validation.threatLevel)} />
+          <InfoRow label="Latency" value={`${validation.latencyMs}ms`} mono />
+          {validation.category && <InfoRow label="Category" value={validation.category.replace(/_/g, ' ')} />}
         </div>
-      </Card>
+      </div>
 
       {/* Layer Results */}
-      <div className="space-y-3">
-        <h3 className="text-sm font-semibold">Defense Layers</h3>
-        {validation.layers.map((layer, i) => (
-          <LayerCard key={i} layer={layer} />
-        ))}
+      <div style={{ marginBottom: 16 }}>
+        <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 10 }}>Defense Layers</h3>
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
+          {validation.layers.map((layer, i) => (
+            <LayerCard key={i} layer={layer} />
+          ))}
+        </div>
       </div>
 
       {/* Explanation */}
       {validation.explanation && (
-        <Card className="bg-background border-border p-4">
-          <h3 className="text-sm font-semibold mb-2">Explanation</h3>
-          <p className="text-sm text-muted-foreground leading-relaxed">
+        <div style={{ background: '#111113', border: '1px solid #27272a', borderRadius: 10, padding: 16 }}>
+          <h3 style={{ fontSize: 13, fontWeight: 600, color: '#fff', marginBottom: 8 }}>Explanation</h3>
+          <p style={{ fontSize: 13, color: '#a1a1aa', lineHeight: 1.6, margin: 0 }}>
             {validation.explanation.summary}
           </p>
           {validation.explanation.owaspCategory && (
-            <div className="mt-3 pt-3 border-t border-border">
-              <span className="text-xs font-medium text-amber-500">
+            <div style={{ marginTop: 12, paddingTop: 12, borderTop: '1px solid #27272a' }}>
+              <span style={{ fontSize: 11, fontWeight: 600, color: '#f59e0b', textTransform: 'uppercase', letterSpacing: '0.04em' }}>
                 {validation.explanation.owaspCategory}
               </span>
             </div>
           )}
-        </Card>
+        </div>
       )}
     </div>
   );
 }
 
-// Layer Card Component
+function InfoRow({ label, value, valueColor, mono }: { label: string; value: string; valueColor?: string; mono?: boolean }) {
+  return (
+    <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+      <span style={{ fontSize: 12, color: '#52525b' }}>{label}</span>
+      <span style={{ fontSize: 13, fontWeight: 600, color: valueColor || '#fff', fontFamily: mono ? 'monospace' : 'inherit' }}>{value}</span>
+    </div>
+  );
+}
+
 function LayerCard({ layer }: { layer: LayerResult }) {
   const statusConfig = {
-    PASS: { color: 'text-green-500', bg: 'bg-green-500/10', border: 'border-green-500/50' },
-    FAIL: { color: 'text-red-500', bg: 'bg-red-500/10', border: 'border-red-500/50' },
-    WARN: { color: 'text-amber-500', bg: 'bg-amber-500/10', border: 'border-amber-500/50' }
+    PASS: { color: '#10b981', bg: 'rgba(16,185,129,0.08)', border: 'rgba(16,185,129,0.3)' },
+    FAIL: { color: '#ef4444', bg: 'rgba(239,68,68,0.08)', border: 'rgba(239,68,68,0.3)' },
+    WARN: { color: '#f59e0b', bg: 'rgba(245,158,11,0.08)', border: 'rgba(245,158,11,0.3)' }
   };
 
   const style = statusConfig[layer.status];
 
   return (
-    <Card className={`bg-background border p-3 ${style.border}`}>
-      <div className="flex items-start justify-between mb-2">
-        <div className="flex-1">
-          <div className="font-medium capitalize text-sm">{layer.layer} Layer</div>
-          <div className="text-xs text-muted-foreground mt-0.5">
-            {layer.latencyMs.toFixed(1)}ms
-          </div>
+    <div style={{ background: '#111113', border: `1px solid ${style.border}`, borderRadius: 8, padding: '10px 14px' }}>
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 4 }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+          <span style={{ fontSize: 13, fontWeight: 500, color: '#fff', textTransform: 'capitalize' }}>{layer.layer}</span>
+          <span style={{ fontSize: 11, color: '#52525b', fontFamily: 'monospace' }}>{layer.latencyMs.toFixed(0)}ms</span>
         </div>
-        <span className={`text-xs font-semibold px-2 py-1 rounded ${style.bg} ${style.color}`}>
+        <span style={{ fontSize: 11, fontWeight: 600, padding: '2px 8px', borderRadius: 4, background: style.bg, color: style.color }}>
           {layer.status}
         </span>
       </div>
       {layer.confidence !== undefined && (
-        <div className="text-xs text-muted-foreground">
+        <div style={{ fontSize: 11, color: '#52525b' }}>
           Confidence: {(layer.confidence * 100).toFixed(0)}%
         </div>
       )}
       {layer.details && (
-        <div className="mt-2 text-xs text-muted-foreground">
+        <div style={{ fontSize: 11, color: '#71717a', marginTop: 4, lineHeight: 1.4 }}>
           {layer.details}
         </div>
       )}
-    </Card>
+    </div>
   );
 }
 
-// Helper Functions
 function getThreatColor(level: string): string {
   switch (level) {
-    case 'CRITICAL': return 'text-red-500';
-    case 'HIGH': return 'text-red-400';
-    case 'MEDIUM': return 'text-amber-500';
-    case 'LOW': return 'text-green-500';
-    default: return 'text-muted-foreground';
+    case 'CRITICAL': return '#ef4444';
+    case 'HIGH': return '#f87171';
+    case 'MEDIUM': return '#f59e0b';
+    case 'LOW': return '#10b981';
+    default: return '#71717a';
   }
 }
 
-// Mock response function removed - now using real LLM via /api/llm/chat
+function generateMockResponse(input: string): string {
+  const lowerInput = input.toLowerCase();
+
+  if (lowerInput.includes('trading hours') || lowerInput.includes('synthetic indices')) {
+    return "Synthetic indices are available for trading 24/7, including weekends and holidays. They simulate real-world market movements and are not affected by market closures or holidays.";
+  }
+
+  if (lowerInput.includes('margin') || lowerInput.includes('leverage')) {
+    return "Margin calculation depends on your leverage ratio. For 1:100 leverage, you need 1% of the position value as margin. For example, to open a $10,000 position, you'd need $100 in margin.";
+  }
+
+  if (lowerInput.includes('kyc') || lowerInput.includes('verification')) {
+    return "For KYC verification, you'll need: 1) A valid government-issued photo ID, 2) Proof of address dated within the last 6 months. Upload clear photos or scans in your account settings.";
+  }
+
+  return "I'd be happy to help you with that. This is a simulated LLM response for demonstration purposes.";
+}

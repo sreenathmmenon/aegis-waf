@@ -103,30 +103,28 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="h-full overflow-y-auto bg-background">
+    <div className="h-full overflow-y-auto">
       {/* Header */}
-      <div className="border-b border-border bg-surface sticky top-0 z-10">
-        <div className="p-6">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-2xl font-bold mb-1">Security Operations Center</h1>
-              <p className="text-sm text-muted-foreground">
-                Real-time threat monitoring and analysis
-              </p>
-            </div>
-            <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-2">
-              <div className={`h-2.5 w-2.5 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
-              <span className={`text-sm font-semibold font-mono ${isConnected ? 'text-green-500' : 'text-red-500'}`}>
-                {isConnected ? '● ACTIVE' : '● DISCONNECTED'}
-              </span>
-            </div>
+      <div style={{ borderBottom: '1px solid #27272a', background: 'rgba(17,17,19,0.6)', paddingTop: 28, paddingBottom: 24, paddingLeft: 32, paddingRight: 32 }}>
+        <div style={{ maxWidth: 1200, margin: '0 auto', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div>
+            <h1 style={{ fontSize: 26, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: 0 }}>Security Operations Center</h1>
+            <p style={{ fontSize: 13, color: '#71717a', marginTop: 4 }}>
+              Real-time threat monitoring and analysis
+            </p>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10, background: '#18181b', border: '1px solid #27272a', borderRadius: 8, padding: '8px 14px' }}>
+            <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-emerald-500 animate-pulse' : 'bg-red-500'}`} />
+            <span style={{ fontSize: 12, fontWeight: 600, fontFamily: 'monospace', color: isConnected ? '#34d399' : '#f87171' }}>
+              {isConnected ? 'ACTIVE' : 'DISCONNECTED'}
+            </span>
           </div>
         </div>
       </div>
 
-      <div className="p-6">
+      <div style={{ padding: '32px 32px', maxWidth: 1200, margin: '0 auto' }}>
         {/* ROW 1: Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <StatsCard
             title="Total Scans"
             value={totalScans}
@@ -154,31 +152,31 @@ export default function DashboardPage() {
             title="Avg Latency"
             value={`${Math.round(avgLatency)}ms`}
             icon={Zap}
-            color="green"
+            color="emerald"
             subtitle="Response time"
           />
         </div>
 
         {/* ROW 2: Timeline + Layer Performance */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           {/* Threat Timeline */}
-          <Card className="bg-surface border-border">
+          <Card className="bg-[#111113] border-[#27272a]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Activity className="h-5 w-5" />
                 Threat Timeline
-                <Badge variant="outline" className="ml-auto">
+                <Badge variant="outline" className="ml-auto text-xs">
                   Last 20 events
                 </Badge>
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4">
               <div
                 ref={timelineRef}
                 className="h-[400px] overflow-y-auto space-y-2 pr-2"
               >
                 {events.length === 0 ? (
-                  <div className="text-center py-12 text-muted-foreground">
+                  <div className="text-center py-12 text-zinc-500">
                     <Shield className="h-12 w-12 mx-auto mb-3 opacity-50" />
                     <p className="text-sm">Waiting for threats...</p>
                   </div>
@@ -198,33 +196,33 @@ export default function DashboardPage() {
           </Card>
 
           {/* Layer Performance */}
-          <Card className="bg-surface border-border">
+          <Card className="bg-[#111113] border-[#27272a]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <TrendingUp className="h-5 w-5" />
                 Layer Performance
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4">
               <ResponsiveContainer width="100%" height={400}>
                 <BarChart data={layerPerformance} layout="horizontal">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#1e1e2e" />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#27272a" />
                   <XAxis
                     type="number"
-                    stroke="#a4a4a8"
-                    tick={{ fill: '#a4a4a8', fontSize: 12 }}
-                    label={{ value: 'Latency (ms)', position: 'insideBottom', offset: -5, fill: '#a4a4a8' }}
+                    stroke="#71717a"
+                    tick={{ fill: '#71717a', fontSize: 12 }}
+                    label={{ value: 'Latency (ms)', position: 'insideBottom', offset: -5, fill: '#71717a' }}
                   />
                   <YAxis
                     type="category"
                     dataKey="layer"
-                    stroke="#a4a4a8"
-                    tick={{ fill: '#a4a4a8', fontSize: 12 }}
+                    stroke="#71717a"
+                    tick={{ fill: '#71717a', fontSize: 12 }}
                   />
                   <Tooltip
                     contentStyle={{
-                      backgroundColor: '#12121a',
-                      border: '1px solid #1e1e2e',
+                      backgroundColor: '#111113',
+                      border: '1px solid #27272a',
                       borderRadius: '8px',
                       color: '#f5f5f5'
                     }}
@@ -244,16 +242,16 @@ export default function DashboardPage() {
         {/* ROW 3: Category Distribution + Threat Levels */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Attack Categories */}
-          <Card className="bg-surface border-border">
+          <Card className="bg-[#111113] border-[#27272a]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <AlertTriangle className="h-5 w-5" />
                 Top Attack Categories
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4">
               {categoryData.length === 0 ? (
-                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                <div className="h-[300px] flex items-center justify-center text-zinc-500">
                   <p className="text-sm">No attack data yet</p>
                 </div>
               ) : (
@@ -266,7 +264,7 @@ export default function DashboardPage() {
                       outerRadius={90}
                       dataKey="value"
                       label={({ name, percent }) => `${name}: ${percent ? (percent * 100).toFixed(0) : 0}%`}
-                      labelLine={{ stroke: '#a4a4a8' }}
+                      labelLine={{ stroke: '#71717a' }}
                     >
                       {categoryData.map((entry, index) => (
                         <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
@@ -274,8 +272,8 @@ export default function DashboardPage() {
                     </Pie>
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: '#12121a',
-                        border: '1px solid #1e1e2e',
+                        backgroundColor: '#111113',
+                        border: '1px solid #27272a',
                         borderRadius: '8px',
                         color: '#f5f5f5'
                       }}
@@ -287,16 +285,16 @@ export default function DashboardPage() {
           </Card>
 
           {/* Threat Level Distribution */}
-          <Card className="bg-surface border-border">
+          <Card className="bg-[#111113] border-[#27272a]">
             <CardHeader>
               <CardTitle className="flex items-center gap-2 text-base">
                 <Shield className="h-5 w-5" />
                 Threat Level Distribution
               </CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4">
               {threatLevelData.length === 0 ? (
-                <div className="h-[300px] flex items-center justify-center text-muted-foreground">
+                <div className="h-[300px] flex items-center justify-center text-zinc-500">
                   <p className="text-sm">No threat data yet</p>
                 </div>
               ) : (
@@ -309,7 +307,7 @@ export default function DashboardPage() {
                       outerRadius={90}
                       dataKey="value"
                       label={({ name, percent }) => `${name}: ${percent ? (percent * 100).toFixed(0) : 0}%`}
-                      labelLine={{ stroke: '#a4a4a8' }}
+                      labelLine={{ stroke: '#71717a' }}
                     >
                       {threatLevelData.map((entry, index) => (
                         <Cell
@@ -320,8 +318,8 @@ export default function DashboardPage() {
                     </Pie>
                     <Tooltip
                       contentStyle={{
-                        backgroundColor: '#12121a',
-                        border: '1px solid #1e1e2e',
+                        backgroundColor: '#111113',
+                        border: '1px solid #27272a',
                         borderRadius: '8px',
                         color: '#f5f5f5'
                       }}
@@ -342,7 +340,7 @@ interface StatsCardProps {
   title: string;
   value: string | number;
   icon: React.ElementType;
-  color: 'blue' | 'red' | 'amber' | 'green';
+  color: 'blue' | 'red' | 'amber' | 'emerald';
   subtitle: string;
   highlight?: boolean;
 }
@@ -352,14 +350,14 @@ function StatsCard({ title, value, icon: Icon, color, subtitle, highlight }: Sta
     blue: 'text-blue-500',
     red: 'text-red-500',
     amber: 'text-amber-500',
-    green: 'text-green-500'
+    emerald: 'text-emerald-500'
   };
 
   const bgMap = {
     blue: 'bg-blue-500/10',
     red: 'bg-red-500/10',
     amber: 'bg-amber-500/10',
-    green: 'bg-green-500/10'
+    emerald: 'bg-emerald-500/10'
   };
 
   return (
@@ -368,20 +366,20 @@ function StatsCard({ title, value, icon: Icon, color, subtitle, highlight }: Sta
       animate={highlight ? { scale: [1, 1.05, 1] } : {}}
       transition={{ duration: 0.3 }}
     >
-      <Card className={`bg-surface border-border ${highlight ? 'border-2 border-red-500/50' : ''}`}>
+      <Card className={`bg-[#111113] border-[#27272a] ${highlight ? 'border-2 border-red-500/50' : ''}`}>
         <CardContent className="p-4">
           <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-medium text-muted-foreground uppercase tracking-wide">
+            <span className="text-[11px] font-medium text-[#71717a] uppercase tracking-wider">
               {title}
             </span>
-            <div className={`p-2 rounded-lg ${bgMap[color]}`}>
+            <div className={`p-2.5 rounded-lg ${bgMap[color]}`}>
               <Icon className={`h-4 w-4 ${colorMap[color]}`} />
             </div>
           </div>
-          <div className={`text-2xl font-bold mb-1 ${colorMap[color]}`}>
+          <div className={`text-xl font-bold mb-1.5 ${colorMap[color]}`}>
             {typeof value === 'number' ? value.toLocaleString() : value}
           </div>
-          <p className="text-xs text-muted-foreground">{subtitle}</p>
+          <p className="text-[12px] text-[#71717a]">{subtitle}</p>
           {highlight && (
             <motion.div
               initial={{ opacity: 0 }}
@@ -415,9 +413,9 @@ function ThreatTimelineItem({ event, isNew }: { event: ThreatEvent; isNew: boole
     },
     ALLOW: {
       icon: Eye,
-      color: 'text-green-500',
-      bg: 'bg-green-500/10',
-      border: 'border-green-500/50'
+      color: 'text-emerald-500',
+      bg: 'bg-emerald-500/10',
+      border: 'border-emerald-500/50'
     }
   };
 
@@ -443,14 +441,14 @@ function ThreatTimelineItem({ event, isNew }: { event: ThreatEvent; isNew: boole
             <span className={`text-xs font-semibold ${style.color}`}>
               {event.action}
             </span>
-            <span className="text-xs text-muted-foreground whitespace-nowrap">
+            <span className="text-xs text-zinc-500 whitespace-nowrap">
               {getTimeAgo(new Date(event.timestamp))}
             </span>
           </div>
-          <p className="text-xs text-foreground line-clamp-2 mb-2 leading-relaxed">
+          <p className="text-xs text-zinc-300 line-clamp-2 mb-2 leading-relaxed">
             {event.input_preview}
           </p>
-          <div className="flex items-center gap-2 text-xs text-muted-foreground">
+          <div className="flex items-center gap-2 text-xs text-zinc-500">
             {event.category && (
               <Badge variant="outline" className="text-xs px-1.5 py-0">
                 {event.category.replace(/_/g, ' ')}

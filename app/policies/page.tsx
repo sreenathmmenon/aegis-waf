@@ -65,22 +65,22 @@ export default function PoliciesPage() {
   };
 
   return (
-    <div className="p-8 min-h-screen">
-      <div className="max-w-6xl mx-auto">
+    <div style={{ paddingTop: 40, paddingBottom: 32, paddingLeft: 32, paddingRight: 32, minHeight: '100vh' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
         {/* Header */}
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-gradient">Security Policies</h1>
-          <p className="text-muted-foreground">
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ fontSize: 26, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: 0 }}>Security Policies</h1>
+          <p style={{ fontSize: 13, color: '#71717a', marginTop: 4 }}>
             Configure defense layers, thresholds, and custom rules for your AI firewall
           </p>
         </div>
 
         {/* Info Banner */}
-        <Card className="bg-blue-500/5 border-blue-500/50 mb-6">
+        <Card className="bg-blue-500/5 border-blue-500/50 mb-8">
           <CardContent className="p-4 flex items-start gap-3">
             <AlertCircle className="h-5 w-5 text-blue-500 mt-0.5" />
-            <div className="text-sm text-muted-foreground">
-              <strong className="text-foreground">Demo Mode:</strong> Configuration changes are
+            <div className="text-sm text-zinc-300">
+              <strong className="text-white">Demo Mode:</strong> Configuration changes are
               visual only and will not persist. In production, these settings would be stored
               in your security policy database.
             </div>
@@ -88,30 +88,30 @@ export default function PoliciesPage() {
         </Card>
 
         {/* Defense Layers Configuration */}
-        <Card className="bg-surface border-border mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="bg-[#111113] border-[#27272a] mb-8">
+          <CardHeader className="p-4">
+            <CardTitle className="flex items-center gap-2 text-base">
               <Shield className="h-5 w-5" />
               Defense Layers
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-zinc-500">
               Enable or disable individual security layers. Disabled layers will be skipped
               during validation.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-6">
+          <CardContent className="space-y-4 p-4 pt-0">
             {/* Pattern Detection */}
-            <div className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border">
+            <div className="flex items-center justify-between p-4 rounded-lg bg-[#18181b] border border-[#27272a]">
               <div className="flex items-start gap-4 flex-1">
-                <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
-                  <Eye className="h-5 w-5 text-green-500" />
+                <div className="h-10 w-10 rounded-lg bg-emerald-500/10 flex items-center justify-center">
+                  <Eye className="h-5 w-5 text-emerald-500" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold">Pattern Detection</h3>
+                    <h3 className="font-semibold text-white">Pattern Detection</h3>
                     <Badge variant="outline" className="text-xs">Regex-based</Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-zinc-500">
                     Zero-latency detection of known attack patterns using regex rules
                   </p>
                 </div>
@@ -120,17 +120,17 @@ export default function PoliciesPage() {
             </div>
 
             {/* Intent Classification */}
-            <div className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border">
+            <div className="flex items-center justify-between p-4 rounded-lg bg-[#18181b] border border-[#27272a]">
               <div className="flex items-start gap-4 flex-1">
                 <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
                   <Brain className="h-5 w-5 text-blue-500" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold">Intent Classification</h3>
+                    <h3 className="font-semibold text-white">Intent Classification</h3>
                     <Badge variant="outline" className="text-xs">AI-powered</Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-zinc-500">
                     AI analysis to detect hidden malicious intent and adversarial goals
                   </p>
                 </div>
@@ -139,17 +139,17 @@ export default function PoliciesPage() {
             </div>
 
             {/* Semantic Scanning */}
-            <div className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border">
+            <div className="flex items-center justify-between p-4 rounded-lg bg-[#18181b] border border-[#27272a]">
               <div className="flex items-start gap-4 flex-1">
                 <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
                   <Lock className="h-5 w-5 text-purple-500" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold">Semantic Guard</h3>
+                    <h3 className="font-semibold text-white">Semantic Guard</h3>
                     <Badge variant="outline" className="text-xs">Similarity-based</Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-zinc-500">
                     Similarity matching against known attack database to catch variants
                   </p>
                 </div>
@@ -158,17 +158,17 @@ export default function PoliciesPage() {
             </div>
 
             {/* Behavior Monitor */}
-            <div className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border">
+            <div className="flex items-center justify-between p-4 rounded-lg bg-[#18181b] border border-[#27272a]">
               <div className="flex items-start gap-4 flex-1">
-                <div className="h-10 w-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
-                  <Activity className="h-5 w-5 text-yellow-500" />
+                <div className="h-10 w-10 rounded-lg bg-amber-500/10 flex items-center justify-center">
+                  <Activity className="h-5 w-5 text-amber-500" />
                 </div>
                 <div className="flex-1">
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold">Behavior Monitor</h3>
+                    <h3 className="font-semibold text-white">Behavior Monitor</h3>
                     <Badge variant="outline" className="text-xs">Session-based</Badge>
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm text-zinc-500">
                     Track session behavior and detect repeated probing attempts
                   </p>
                 </div>
@@ -179,24 +179,24 @@ export default function PoliciesPage() {
         </Card>
 
         {/* Threat Thresholds */}
-        <Card className="bg-surface border-border mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
+        <Card className="bg-[#111113] border-[#27272a] mb-8">
+          <CardHeader className="p-4">
+            <CardTitle className="flex items-center gap-2 text-base">
               <Settings className="h-5 w-5" />
               Detection Thresholds
             </CardTitle>
-            <CardDescription>
+            <CardDescription className="text-zinc-500">
               Adjust confidence thresholds for blocking decisions. Higher values reduce false
               positives but may miss some threats.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-8">
+          <CardContent className="space-y-8 p-4 pt-0">
             {/* Pattern Threshold */}
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="font-medium">Pattern Detection Threshold</label>
-                  <p className="text-sm text-muted-foreground">
+                  <label className="text-sm font-medium text-white">Pattern Detection Threshold</label>
+                  <p className="text-sm text-zinc-500">
                     Minimum confidence to block based on pattern matching
                   </p>
                 </div>
@@ -221,8 +221,8 @@ export default function PoliciesPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="font-medium">Intent Classification Threshold</label>
-                  <p className="text-sm text-muted-foreground">
+                  <label className="text-sm font-medium text-white">Intent Classification Threshold</label>
+                  <p className="text-sm text-zinc-500">
                     Minimum confidence to block based on AI intent analysis
                   </p>
                 </div>
@@ -247,8 +247,8 @@ export default function PoliciesPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="font-medium">Semantic Similarity Threshold</label>
-                  <p className="text-sm text-muted-foreground">
+                  <label className="text-sm font-medium text-white">Semantic Similarity Threshold</label>
+                  <p className="text-sm text-zinc-500">
                     Minimum similarity to known attacks for blocking
                   </p>
                 </div>
@@ -273,8 +273,8 @@ export default function PoliciesPage() {
             <div className="space-y-3">
               <div className="flex items-center justify-between">
                 <div>
-                  <label className="font-medium">Behavior Risk Threshold</label>
-                  <p className="text-sm text-muted-foreground">
+                  <label className="text-sm font-medium text-white">Behavior Risk Threshold</label>
+                  <p className="text-sm text-zinc-500">
                     Session risk score threshold for escalating FLAG to BLOCK
                   </p>
                 </div>
@@ -296,50 +296,50 @@ export default function PoliciesPage() {
         </Card>
 
         {/* Custom Rules */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
           {/* Blocklist */}
-          <Card className="bg-surface border-border">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
+          <Card className="bg-[#111113] border-[#27272a]">
+            <CardHeader className="p-4">
+              <CardTitle className="flex items-center gap-2 text-base">
                 <AlertCircle className="h-5 w-5 text-red-500" />
                 Blocklist Patterns
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-zinc-500">
                 Custom phrases to always block (one per line)
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 pt-0">
               <Textarea
                 value={blocklist}
                 onChange={(e) => setBlocklist(e.target.value)}
                 placeholder="Enter phrases to block, one per line..."
-                className="font-mono text-sm min-h-[200px] bg-background"
+                className="font-mono text-[13px] min-h-[200px] bg-[#09090b]"
               />
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-xs text-zinc-600 mt-2">
                 {blocklist.split("\n").filter((line) => line.trim()).length} patterns defined
               </p>
             </CardContent>
           </Card>
 
           {/* Allowlist */}
-          <Card className="bg-surface border-border">
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2 text-lg">
-                <CheckCircle2 className="h-5 w-5 text-green-500" />
+          <Card className="bg-[#111113] border-[#27272a]">
+            <CardHeader className="p-4">
+              <CardTitle className="flex items-center gap-2 text-base">
+                <CheckCircle2 className="h-5 w-5 text-emerald-500" />
                 Allowlist Patterns
               </CardTitle>
-              <CardDescription>
+              <CardDescription className="text-zinc-500">
                 Known-safe phrases to always allow (one per line)
               </CardDescription>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-4 pt-0">
               <Textarea
                 value={allowlist}
                 onChange={(e) => setAllowlist(e.target.value)}
                 placeholder="Enter safe phrases, one per line..."
-                className="font-mono text-sm min-h-[200px] bg-background"
+                className="font-mono text-[13px] min-h-[200px] bg-[#09090b]"
               />
-              <p className="text-xs text-muted-foreground mt-2">
+              <p className="text-xs text-zinc-600 mt-2">
                 {allowlist.split("\n").filter((line) => line.trim()).length} patterns defined
               </p>
             </CardContent>
@@ -348,14 +348,14 @@ export default function PoliciesPage() {
 
         {/* Action Buttons */}
         <div className="flex items-center justify-end gap-4">
-          <Button variant="outline" onClick={handleReset} className="gap-2">
+          <Button variant="outline" onClick={handleReset} className="gap-2 border-[#27272a] bg-[#18181b]">
             <RotateCcw className="h-4 w-4" />
             Reset to Defaults
           </Button>
           <Button
             onClick={handleSave}
             disabled={saveStatus === "saving"}
-            className="gap-2 bg-green-600 hover:bg-green-700"
+            className="gap-2 bg-emerald-600 hover:bg-emerald-700"
           >
             {saveStatus === "saving" ? (
               <>

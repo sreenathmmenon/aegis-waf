@@ -20,7 +20,6 @@ import {
 import { ValidationResult } from "@/lib/types";
 import attackExamples from "@/lib/data/attackExamples.json";
 import legitimateExamples from "@/lib/data/legitimateExamples.json";
-import zerodayExamples from "@/lib/data/zeroday-examples.json";
 
 export default function PlaygroundPage() {
   const [input, setInput] = useState("");
@@ -72,8 +71,8 @@ export default function PlaygroundPage() {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'basic': return 'bg-green-500/10 text-green-500 border-green-500/20';
-      case 'intermediate': return 'bg-yellow-500/10 text-yellow-500 border-yellow-500/20';
+      case 'basic': return 'bg-emerald-500/10 text-emerald-500 border-emerald-500/20';
+      case 'intermediate': return 'bg-amber-500/10 text-amber-500 border-amber-500/20';
       case 'advanced': return 'bg-red-500/10 text-red-500 border-red-500/20';
       default: return 'bg-blue-500/10 text-blue-500 border-blue-500/20';
     }
@@ -84,9 +83,9 @@ export default function PlaygroundPage() {
 
     const configs = {
       ALLOW: {
-        color: 'bg-green-500/10 border-green-500/50',
+        color: 'bg-emerald-500/10 border-emerald-500/50',
         icon: CheckCircle,
-        iconColor: 'text-green-500',
+        iconColor: 'text-emerald-500',
         title: 'SAFE',
         subtitle: 'No threats detected'
       },
@@ -98,9 +97,9 @@ export default function PlaygroundPage() {
         subtitle: 'Threat detected and prevented'
       },
       FLAG: {
-        color: 'bg-yellow-500/10 border-yellow-500/50',
+        color: 'bg-amber-500/10 border-amber-500/50',
         icon: AlertTriangle,
-        iconColor: 'text-yellow-500',
+        iconColor: 'text-amber-500',
         title: 'FLAGGED',
         subtitle: 'Suspicious activity detected'
       }
@@ -113,30 +112,30 @@ export default function PlaygroundPage() {
       <motion.div
         initial={{ opacity: 0, y: -20 }}
         animate={{ opacity: 1, y: 0 }}
-        className={`p-6 rounded-lg border-2 ${config.color} mb-6`}
+        className={`p-4 rounded-lg border-2 ${config.color} mb-5`}
       >
-        <div className="flex items-start gap-4">
-          <Icon className={`h-8 w-8 ${config.iconColor} flex-shrink-0`} />
+        <div className="flex items-start gap-3">
+          <Icon className={`h-6 w-6 ${config.iconColor} flex-shrink-0`} />
           <div className="flex-1">
-            <h3 className={`text-2xl font-bold ${config.iconColor} mb-1`}>
+            <h3 className={`text-[18px] font-bold ${config.iconColor} mb-1`}>
               {config.title}
             </h3>
-            <p className="text-muted-foreground mb-3">{config.subtitle}</p>
-            <div className="flex gap-4 text-sm">
-              <div className="flex items-center gap-1">
-                <Activity className="h-4 w-4" />
+            <p className="text-[12px] text-zinc-500 mb-2">{config.subtitle}</p>
+            <div className="flex gap-3 text-[12px]">
+              <div className="flex items-center gap-1 text-zinc-300">
+                <Activity className="h-3.5 w-3.5" />
                 <span className="font-mono">
                   {(result.confidence * 100).toFixed(0)}% confidence
                 </span>
               </div>
-              <div className="flex items-center gap-1">
-                <Clock className="h-4 w-4" />
+              <div className="flex items-center gap-1 text-zinc-300">
+                <Clock className="h-3.5 w-3.5" />
                 <span className="font-mono">{Math.round(result.latencyMs)}ms</span>
               </div>
               {result.category && (
-                <div className="flex items-center gap-1">
-                  <Shield className="h-4 w-4" />
-                  <span className="font-mono text-xs">{result.category}</span>
+                <div className="flex items-center gap-1 text-zinc-300">
+                  <Shield className="h-3.5 w-3.5" />
+                  <span className="font-mono text-[11px]">{result.category}</span>
                 </div>
               )}
             </div>
@@ -165,32 +164,32 @@ export default function PlaygroundPage() {
   };
 
   return (
-    <div className="p-8 min-h-screen">
-      <div className="max-w-7xl mx-auto">
-        <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2 text-gradient">Attack Playground</h1>
-          <p className="text-muted-foreground">
+    <div style={{ paddingTop: 40, paddingBottom: 32, paddingLeft: 32, paddingRight: 32, minHeight: '100vh' }}>
+      <div style={{ maxWidth: 1200, margin: '0 auto' }}>
+        <div style={{ marginBottom: 32 }}>
+          <h1 style={{ fontSize: 26, fontWeight: 700, color: '#fff', letterSpacing: '-0.02em', margin: 0 }}>Attack Playground</h1>
+          <p style={{ fontSize: 13, color: '#71717a', marginTop: 4 }}>
             Test the AEGIS defense system with real-time multi-layered threat analysis
           </p>
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           {/* LEFT COLUMN - Input Panel */}
-          <div className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Lock className="h-5 w-5" />
+          <div className="space-y-5">
+            <Card className="border-[#27272a] bg-[#111113]">
+              <CardHeader className="p-4 pb-0">
+                <CardTitle className="flex items-center gap-2 text-[14px] text-white">
+                  <Lock className="h-4 w-4" />
                   Input Analysis
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-[12px] text-zinc-500">
                   Type or paste a prompt to analyze for security threats
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-3 p-4 pt-3">
                 <Textarea
                   placeholder="Type or paste a prompt to analyze..."
-                  className="min-h-[200px] font-mono bg-surface border-border focus:border-green-500 transition-colors"
+                  className="min-h-[200px] font-mono text-[13px] bg-[#0f0f11] border-[#27272a] focus:border-emerald-500 transition-colors text-zinc-300"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                 />
@@ -198,18 +197,18 @@ export default function PlaygroundPage() {
                   <Button
                     onClick={handleAnalyze}
                     disabled={!input.trim() || isAnalyzing}
-                    className="flex-1 bg-green-500 hover:bg-green-600"
+                    className="flex-1 bg-emerald-600 hover:bg-emerald-500 text-white text-[13px] py-4"
                   >
                     {isAnalyzing ? (
                       <span className="flex items-center gap-2">
-                        <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                        <div className="h-3.5 w-3.5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                         Analyzing...
                       </span>
                     ) : (
                       'Analyze'
                     )}
                   </Button>
-                  <Button variant="outline" onClick={handleClear}>
+                  <Button variant="outline" onClick={handleClear} className="text-[13px] py-4 border-[#27272a] bg-[#18181b] hover:bg-[#27272a] text-zinc-300">
                     Clear
                   </Button>
                 </div>
@@ -217,37 +216,37 @@ export default function PlaygroundPage() {
             </Card>
 
             {/* Preset Attacks */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-red-500">
-                  <AlertTriangle className="h-5 w-5" />
+            <Card className="border-[#27272a] bg-[#111113]">
+              <CardHeader className="p-4 pb-0">
+                <CardTitle className="flex items-center gap-2 text-red-500 text-[14px]">
+                  <AlertTriangle className="h-4 w-4" />
                   Preset Attacks
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-[12px] text-zinc-500">
                   Click to test with known attack patterns
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-3">
+              <CardContent className="p-4 pt-3">
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-1 gap-2">
                   {attackExamples.slice(0, 6).map((attack) => (
                     <button
                       key={attack.id}
                       onClick={() => handlePresetClick(attack.payload)}
-                      className="text-left p-3 border border-border rounded-lg hover:bg-secondary hover:border-red-500/30 transition-all group"
+                      className="text-left p-3 border border-[#27272a] rounded-lg hover:bg-[#18181b] hover:border-red-500/30 transition-all group"
                     >
-                      <div className="flex items-start justify-between mb-2">
-                        <span className="font-semibold text-sm">{attack.name}</span>
+                      <div className="flex items-start justify-between mb-1.5">
+                        <span className="font-semibold text-[12px] text-zinc-300">{attack.name}</span>
                         <Badge
                           variant="outline"
-                          className={`text-xs ${getDifficultyColor(attack.difficulty)}`}
+                          className={`text-[11px] ${getDifficultyColor(attack.difficulty)}`}
                         >
                           {attack.difficulty}
                         </Badge>
                       </div>
-                      <p className="text-xs text-muted-foreground line-clamp-2 mb-1">
+                      <p className="text-[12px] text-zinc-600 line-clamp-2 mb-1">
                         {attack.description}
                       </p>
-                      <Badge variant="outline" className="text-xs">
+                      <Badge variant="outline" className="text-[11px] border-[#27272a]">
                         {attack.category.replace('_', ' ')}
                       </Badge>
                     </button>
@@ -256,66 +255,29 @@ export default function PlaygroundPage() {
               </CardContent>
             </Card>
 
-            {/* Zero-Day / Novel Attacks */}
-            <Card className="border-purple-500/20 bg-purple-500/5">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-purple-400">
-                  <Zap className="h-5 w-5" />
-                  Zero-Day Attacks (Novel)
-                </CardTitle>
-                <CardDescription>
-                  Attacks NOT in our training dataset - tests AI reasoning ability
-                </CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-3">
-                  {zerodayExamples.map((attack, idx) => (
-                    <button
-                      key={idx}
-                      onClick={() => handlePresetClick(attack.prompt)}
-                      className="text-left p-3 border border-purple-500/30 rounded-lg hover:bg-purple-500/10 hover:border-purple-500/50 transition-all"
-                    >
-                      <div className="flex items-start justify-between mb-2">
-                        <span className="font-semibold text-sm text-purple-300">{attack.label}</span>
-                        <Badge variant="outline" className="text-xs bg-purple-500/20 border-purple-500/40">
-                          NOVEL
-                        </Badge>
-                      </div>
-                      <p className="text-xs text-muted-foreground mb-2">
-                        {attack.why_dangerous}
-                      </p>
-                      <p className="text-xs text-purple-200/70 line-clamp-2">
-                        "{attack.prompt}"
-                      </p>
-                    </button>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-
             {/* Legitimate Prompts */}
-            <Card className="border-green-500/20">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2 text-green-500">
-                  <CheckCircle className="h-5 w-5" />
+            <Card className="border-emerald-500/20 bg-[#111113]">
+              <CardHeader className="p-4 pb-0">
+                <CardTitle className="flex items-center gap-2 text-emerald-500 text-[14px]">
+                  <CheckCircle className="h-4 w-4" />
                   Legitimate Prompts
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-[12px] text-zinc-500">
                   Verify we don't block legitimate use cases
                 </CardDescription>
               </CardHeader>
-              <CardContent>
-                <div className="grid grid-cols-1 gap-3">
+              <CardContent className="p-4 pt-3">
+                <div className="grid grid-cols-1 gap-2">
                   {legitimateExamples.slice(0, 4).map((example) => (
                     <button
                       key={example.id}
                       onClick={() => handlePresetClick(example.payload)}
-                      className="text-left p-3 border border-green-500/20 rounded-lg hover:bg-green-500/5 hover:border-green-500/40 transition-all"
+                      className="text-left p-3 border border-emerald-500/20 rounded-lg hover:bg-emerald-500/5 hover:border-emerald-500/40 transition-all"
                     >
-                      <span className="font-semibold text-sm block mb-1">
+                      <span className="font-semibold text-[12px] block mb-1 text-zinc-300">
                         {example.name}
                       </span>
-                      <p className="text-xs text-muted-foreground line-clamp-2">
+                      <p className="text-[12px] text-zinc-600 line-clamp-2">
                         {example.payload}
                       </p>
                     </button>
@@ -327,17 +289,17 @@ export default function PlaygroundPage() {
 
           {/* RIGHT COLUMN - Results Panel */}
           <div>
-            <Card className="sticky top-4 min-h-[600px]">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Activity className="h-5 w-5" />
+            <Card className="sticky top-4 min-h-[600px] border-[#27272a] bg-[#111113]">
+              <CardHeader className="p-4 pb-0">
+                <CardTitle className="flex items-center gap-2 text-[14px] text-white">
+                  <Activity className="h-4 w-4" />
                   Analysis Results
                 </CardTitle>
-                <CardDescription>
+                <CardDescription className="text-[12px] text-zinc-500">
                   Real-time threat detection and layer breakdown
                 </CardDescription>
               </CardHeader>
-              <CardContent>
+              <CardContent className="p-4 pt-3">
                 <AnimatePresence mode="wait">
                   {isAnalyzing ? (
                     <motion.div
@@ -345,11 +307,11 @@ export default function PlaygroundPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="flex flex-col items-center justify-center py-20"
+                      className="flex flex-col items-center justify-center py-16"
                     >
-                      <div className="h-16 w-16 border-4 border-green-500 border-t-transparent rounded-full animate-spin mb-4" />
-                      <p className="text-lg font-semibold mb-2">Scanning...</p>
-                      <p className="text-sm text-muted-foreground">
+                      <div className="h-12 w-12 border-3 border-emerald-500 border-t-transparent rounded-full animate-spin mb-4" />
+                      <p className="text-[14px] font-semibold text-white mb-1">Scanning...</p>
+                      <p className="text-[12px] text-zinc-500">
                         Running multi-layer analysis
                       </p>
                     </motion.div>
@@ -363,14 +325,14 @@ export default function PlaygroundPage() {
                       {getDecisionBanner()}
 
                       {/* Layer Breakdown */}
-                      <div className="space-y-3 mb-6">
-                        <h4 className="font-semibold text-sm mb-3">Defense Layers</h4>
+                      <div className="space-y-2 mb-5">
+                        <h4 className="font-semibold text-[12px] text-zinc-300 mb-2">Defense Layers</h4>
                         {result.layers.map((layer, index) => {
                           const Icon = getLayerIcon(layer.layer);
                           const statusColor =
-                            layer.status === 'PASS' ? 'text-green-500' :
+                            layer.status === 'PASS' ? 'text-emerald-500' :
                             layer.status === 'FAIL' ? 'text-red-500' :
-                            'text-yellow-500';
+                            'text-amber-500';
 
                           return (
                             <motion.div
@@ -378,47 +340,47 @@ export default function PlaygroundPage() {
                               initial={{ opacity: 0, x: -20 }}
                               animate={{ opacity: 1, x: 0 }}
                               transition={{ delay: index * 0.1 }}
-                              className="p-4 border border-border rounded-lg hover:border-green-500/30 transition-colors"
+                              className="p-3 border border-[#27272a] rounded-lg hover:border-[#3f3f46] transition-colors"
                             >
-                              <div className="flex items-start justify-between mb-2">
+                              <div className="flex items-start justify-between mb-1.5">
                                 <div className="flex items-center gap-2">
-                                  <Icon className={`h-4 w-4 ${statusColor}`} />
-                                  <span className="font-mono text-sm font-semibold">
+                                  <Icon className={`h-3.5 w-3.5 ${statusColor}`} />
+                                  <span className="font-mono text-[12px] font-semibold text-zinc-300">
                                     {getLayerName(layer.layer)}
                                   </span>
                                 </div>
                                 <div className="flex items-center gap-2">
                                   <Badge
                                     variant="outline"
-                                    className={
-                                      layer.status === 'PASS' ? 'text-green-500 border-green-500/50' :
+                                    className={`text-[11px] ${
+                                      layer.status === 'PASS' ? 'text-emerald-500 border-emerald-500/50' :
                                       layer.status === 'FAIL' ? 'text-red-500 border-red-500/50' :
-                                      'text-yellow-500 border-yellow-500/50'
-                                    }
+                                      'text-amber-500 border-amber-500/50'
+                                    }`}
                                   >
                                     {layer.status}
                                   </Badge>
-                                  <span className="text-xs text-muted-foreground font-mono">
+                                  <span className="text-[11px] text-zinc-600 font-mono">
                                     {layer.latencyMs.toFixed(0)}ms
                                   </span>
                                 </div>
                               </div>
-                              <p className="text-xs text-muted-foreground mb-2">
+                              <p className="text-[12px] text-zinc-500 mb-1.5">
                                 {layer.details}
                               </p>
-                              <div className="flex items-center gap-2 text-xs">
-                                <span className="text-muted-foreground">Confidence:</span>
-                                <div className="flex-1 bg-surface rounded-full h-2">
+                              <div className="flex items-center gap-2 text-[11px]">
+                                <span className="text-zinc-600">Confidence:</span>
+                                <div className="flex-1 bg-[#18181b] rounded-full h-1.5">
                                   <div
-                                    className={`h-2 rounded-full transition-all ${
-                                      layer.confidence > 0.7 ? 'bg-green-500' :
-                                      layer.confidence > 0.4 ? 'bg-yellow-500' :
+                                    className={`h-1.5 rounded-full transition-all ${
+                                      layer.confidence > 0.7 ? 'bg-emerald-500' :
+                                      layer.confidence > 0.4 ? 'bg-amber-500' :
                                       'bg-red-500'
                                     }`}
                                     style={{ width: `${layer.confidence * 100}%` }}
                                   />
                                 </div>
-                                <span className="font-mono text-muted-foreground">
+                                <span className="font-mono text-zinc-600">
                                   {(layer.confidence * 100).toFixed(0)}%
                                 </span>
                               </div>
@@ -433,42 +395,42 @@ export default function PlaygroundPage() {
                           initial={{ opacity: 0, y: 20 }}
                           animate={{ opacity: 1, y: 0 }}
                           transition={{ delay: 0.3 }}
-                          className={`p-4 border-l-4 rounded-lg ${
+                          className={`p-3 border-l-4 rounded-lg ${
                             result.decision === 'BLOCK'
                               ? 'border-red-500 bg-red-500/5'
-                              : 'border-yellow-500 bg-yellow-500/5'
+                              : 'border-amber-500 bg-amber-500/5'
                           }`}
                         >
-                          <h4 className="font-semibold mb-2 flex items-center gap-2">
-                            <Shield className="h-4 w-4" />
+                          <h4 className="font-semibold text-[13px] text-white mb-2 flex items-center gap-2">
+                            <Shield className="h-3.5 w-3.5" />
                             Security Analysis
                           </h4>
-                          <div className="space-y-3 text-sm">
+                          <div className="space-y-2 text-[12px]">
                             <div>
-                              <span className="text-muted-foreground font-semibold">Summary: </span>
-                              <span>{result.explanation.summary}</span>
+                              <span className="text-zinc-500 font-semibold">Summary: </span>
+                              <span className="text-zinc-300">{result.explanation.summary}</span>
                             </div>
                             <div>
-                              <span className="text-muted-foreground font-semibold">OWASP: </span>
-                              <span className="font-mono text-xs">{result.explanation.owaspCategory}</span>
+                              <span className="text-zinc-500 font-semibold">OWASP: </span>
+                              <span className="font-mono text-[11px] text-zinc-300">{result.explanation.owaspCategory}</span>
                             </div>
                             <div>
-                              <span className="text-muted-foreground font-semibold">Technical Detail: </span>
-                              <p className="text-xs mt-1">{result.explanation.technicalDetail}</p>
+                              <span className="text-zinc-500 font-semibold">Technical Detail: </span>
+                              <p className="text-[11px] mt-1 text-zinc-400">{result.explanation.technicalDetail}</p>
                             </div>
                             {result.explanation.evidence.length > 0 && (
                               <div>
-                                <span className="text-muted-foreground font-semibold">Evidence:</span>
-                                <ul className="list-disc list-inside text-xs mt-1 space-y-1">
+                                <span className="text-zinc-500 font-semibold">Evidence:</span>
+                                <ul className="list-disc list-inside text-[11px] mt-1 space-y-0.5 text-zinc-400">
                                   {result.explanation.evidence.map((item, i) => (
                                     <li key={i}>{item}</li>
                                   ))}
                                 </ul>
                               </div>
                             )}
-                            <div className="pt-2 border-t border-border">
-                              <span className="text-muted-foreground font-semibold">Recommendation: </span>
-                              <p className="text-xs mt-1">{result.explanation.recommendation}</p>
+                            <div className="pt-2 border-t border-[#27272a]">
+                              <span className="text-zinc-500 font-semibold">Recommendation: </span>
+                              <p className="text-[11px] mt-1 text-zinc-400">{result.explanation.recommendation}</p>
                             </div>
                           </div>
                         </motion.div>
@@ -480,11 +442,11 @@ export default function PlaygroundPage() {
                       initial={{ opacity: 0 }}
                       animate={{ opacity: 1 }}
                       exit={{ opacity: 0 }}
-                      className="flex flex-col items-center justify-center py-20 text-center"
+                      className="flex flex-col items-center justify-center py-16 text-center"
                     >
-                      <Shield className="h-16 w-16 text-muted-foreground/50 mb-4" />
-                      <p className="text-lg font-semibold mb-2">Ready to Analyze</p>
-                      <p className="text-sm text-muted-foreground max-w-xs">
+                      <Shield className="h-12 w-12 text-zinc-600 mb-4" />
+                      <p className="text-[14px] font-semibold text-white mb-1">Ready to Analyze</p>
+                      <p className="text-[12px] text-zinc-500 max-w-xs">
                         Submit a prompt to see real-time threat analysis from all defense layers
                       </p>
                     </motion.div>
@@ -495,9 +457,9 @@ export default function PlaygroundPage() {
                   <motion.div
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
-                    className="mt-4 p-4 bg-red-500/10 border border-red-500/50 rounded-lg"
+                    className="mt-3 p-3 bg-red-500/10 border border-red-500/50 rounded-lg"
                   >
-                    <p className="text-red-500 text-sm">{error}</p>
+                    <p className="text-red-500 text-[12px]">{error}</p>
                   </motion.div>
                 )}
               </CardContent>
