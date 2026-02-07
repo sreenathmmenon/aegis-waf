@@ -1,0 +1,175 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Inter:wght@100..900&display=swap');
+@import "tailwindcss";
+
+:root {
+  /* Background colors */
+  --background: #0a0a0f;
+  --surface: #12121a;
+
+  /* Foreground colors */
+  --foreground: #f5f5f5;
+
+  /* Card */
+  --card: #12121a;
+  --card-foreground: #f5f5f5;
+
+  /* Popover */
+  --popover: #12121a;
+  --popover-foreground: #f5f5f5;
+
+  /* Primary */
+  --primary: #22c55e;
+  --primary-foreground: #ffffff;
+
+  /* Secondary */
+  --secondary: #2a2a3a;
+  --secondary-foreground: #f5f5f5;
+
+  /* Muted */
+  --muted: #2a2a3a;
+  --muted-foreground: #a4a4a8;
+
+  /* Accent */
+  --accent: #3b82f6;
+  --accent-foreground: #ffffff;
+
+  /* Destructive */
+  --destructive: #ef4444;
+  --destructive-foreground: #ffffff;
+
+  /* Border */
+  --border: #1e1e2e;
+  --input: #1e1e2e;
+  --ring: #22c55e;
+
+  /* Chart colors */
+  --chart-1: #22c55e;
+  --chart-2: #ef4444;
+  --chart-3: #eab308;
+  --chart-4: #3b82f6;
+  --chart-5: #a855f7;
+
+  /* Custom colors for security levels */
+  --safe: #22c55e;
+  --blocked: #ef4444;
+  --suspicious: #eab308;
+  --info: #3b82f6;
+  --analysis: #a855f7;
+
+  --radius: 0.5rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-border: var(--border);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-accent: var(--accent);
+  --color-destructive: var(--destructive);
+  --color-muted: var(--muted);
+  --color-card: var(--card);
+  --font-sans: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+}
+
+* {
+  box-sizing: border-box;
+  padding: 0;
+  margin: 0;
+  border-color: var(--border);
+}
+
+html {
+  color-scheme: dark;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: 'Inter', sans-serif;
+  font-feature-settings: "rlig" 1, "calt" 1;
+  min-height: 100vh;
+}
+
+code, pre, .font-mono {
+  font-family: 'JetBrains Mono', monospace;
+}
+
+/* Scrollbar styling */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--surface);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary);
+}
+
+/* Utility classes */
+.text-gradient {
+  background: linear-gradient(to right, var(--safe), var(--info));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.text-gradient-danger {
+  background: linear-gradient(to right, var(--blocked), var(--suspicious));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* Glow effects */
+.glow-green {
+  box-shadow: 0 0 20px rgba(34, 197, 94, 0.3);
+}
+
+.glow-red {
+  box-shadow: 0 0 20px rgba(239, 68, 68, 0.3);
+}
+
+.glow-yellow {
+  box-shadow: 0 0 20px rgba(234, 179, 8, 0.3);
+}
+
+.glow-blue {
+  box-shadow: 0 0 20px rgba(59, 130, 246, 0.3);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3);
+}
+
+/* Background patterns */
+.bg-grid-pattern {
+  background-image:
+    linear-gradient(rgba(30, 30, 46, 0.1) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(30, 30, 46, 0.1) 1px, transparent 1px);
+  background-size: 50px 50px;
+}
+
+/* Animations */
+@keyframes pulse-glow {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+.animate-pulse-glow {
+  animation: pulse-glow 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
