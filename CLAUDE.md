@@ -35,11 +35,30 @@ Built for the Deriv AI Talent Sprint hackathon (Security track).
 - Font: JetBrains Mono (mono), Inter (sans)
 
 ## Architecture
-- Defense layers run in PARALLEL (Promise.all) for speed
+
+### 5-Layer Defense System
+1. **Pattern Detection** (lib/layers/pattern.ts) - 130+ regex patterns, zero API latency (~2ms)
+2. **Intent Classification** (lib/layers/intent.ts) - GPT-4o-mini semantic analysis (~50ms)
+3. **Semantic Analysis** (lib/layers/semantic.ts) - Similarity matching against 42 known attacks (~5ms)
+4. **Behavior Monitoring** (lib/layers/behavior.ts) - Session-based risk scoring
+5. **Output Validation** (lib/layers/output-guard.ts) - PII detection, policy compliance, topic drift (~10ms)
+
+### Real-Time Event System
+- **EventBus** (lib/event-bus.ts) - Singleton pub/sub for threat event distribution
+- **ThreatStore** (lib/threat-store.ts) - Circular buffer (200 events) + auto-simulation
+- **SSE Endpoint** (app/api/events/route.ts) - Server-Sent Events with heartbeat
+- **React Hook** (hooks/use-event-stream.ts) - Auto-reconnect with exponential backoff
+- **Toast Notifications** (components/threat-notifications.tsx) - Bottom-right alerts
+- **Notification Bell** (components/notification-bell.tsx) - Sidebar bell with unread badge
+
+### Key Principles
+- All input defense layers run in PARALLEL (Promise.all) for speed
 - Pattern detector is regex-based (zero API latency)
 - Intent classifier uses GPT-4o-mini with structured JSON response
+- Output validation runs 3 checks in parallel (data leakage, policy, drift)
 - All APIs return the ValidationResult type from lib/types/index.ts
-- Dashboard uses pre-generated synthetic data (not live DB)
+- Real-time events use SSE (not WebSockets) for Vercel compatibility
+- Simulation auto-generates demo traffic (AEGIS_SIMULATE env var)
 - Session tracking is in-memory (Map) for demo simplicity
 
 ## Important: After ANY correction, update this CLAUDE.md with the fix
