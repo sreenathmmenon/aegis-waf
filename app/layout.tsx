@@ -3,7 +3,7 @@
 import type { Metadata } from "next";
 import { usePathname } from "next/navigation";
 import Link from "next/link";
-import { Shield, BarChart3, FileText, Settings, Home, PlayCircle } from "lucide-react";
+import { Shield, BarChart3, FileText, Settings, Home, PlayCircle, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThreatNotifications } from "@/components/threat-notifications";
 import { NotificationBell } from "@/components/notification-bell";
@@ -14,6 +14,11 @@ const navItems = [
     href: "/",
     icon: Home,
     label: "Home",
+  },
+  {
+    href: "/demo",
+    icon: MessageSquare,
+    label: "Live Demo",
   },
   {
     href: "/playground",
