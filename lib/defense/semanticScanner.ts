@@ -1,7 +1,7 @@
 import { SemanticResult, AttackCategory } from '@/lib/types';
 
 // Known attack signatures for similarity comparison
-// In production, these would be embeddings, but we use string comparison for the hackathon demo
+// In production, these would be embeddings, but we use string comparison for performance
 interface AttackSignature {
   text: string;
   category: AttackCategory;
