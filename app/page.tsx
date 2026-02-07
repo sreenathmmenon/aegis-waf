@@ -37,13 +37,13 @@ export default function LandingPage() {
 
             {/* Subtitle */}
             <p className="text-2xl md:text-3xl text-[#a1a1aa] font-medium mb-6">
-              The immune system for AI agents
+              AI WAF for LLM Protection
             </p>
 
             {/* Description */}
             <p className="text-base md:text-lg text-[#71717a] leading-relaxed mb-12 max-w-3xl mx-auto">
-              Multi-layered AI firewall that detects prompt injection, validates outputs,
-              monitors behavior, and explains every security decision.
+              Stop prompt injection attacks before they reach your AI. Four parallel defense layers analyze every request,
+              block malicious inputs, and give you detailed explanations of what went wrong.
             </p>
 
             {/* CTA Buttons */}
@@ -102,97 +102,69 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Defense in Depth</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">How It Protects Your AI</h2>
             <p className="text-base md:text-lg text-[#71717a] max-w-3xl mx-auto leading-relaxed">
-              Four independent security layers working in parallel to protect your AI agents
-              from adversarial inputs and malicious exploitation.
+              Four security layers run in parallel. Each layer checks the input independently,
+              then we combine their results to make a final decision.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
             {/* Feature 1: Pattern Detection */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.1 }}
-              viewport={{ once: true }}
-            >
-              <Card className="bg-[#12121a] border border-[#1e1e2e] rounded-xl h-full hover:border-[#2e2e3e] transition-all duration-200 border-t-4 border-t-green-500/70">
+            <Card className="bg-[#12121a] border border-[#1e1e2e] rounded-xl h-full hover:border-[#2e2e3e] transition-colors border-t-4 border-t-green-500/70">
                 <CardContent className="p-8">
                   <div className="w-14 h-14 rounded-xl bg-green-500/10 flex items-center justify-center mb-6">
                     <Eye className="h-7 w-7 text-green-500" />
                   </div>
                   <h3 className="text-xl font-semibold mb-4">Pattern Detection</h3>
                   <p className="text-sm text-[#a1a1aa] leading-relaxed">
-                    Zero-latency regex-based detection of 7 known attack patterns including
-                    instruction overrides, role hijacking, and encoding tricks.
+                    Fast regex matching against 7 common attack patterns. Catches instruction overrides,
+                    role manipulation, and encoding-based attacks. Runs in ~2ms.
                   </p>
                 </CardContent>
               </Card>
-            </motion.div>
 
             {/* Feature 2: Intent Classification */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              viewport={{ once: true }}
-            >
-              <Card className="bg-[#12121a] border border-[#1e1e2e] rounded-xl h-full hover:border-[#2e2e3e] transition-all duration-200 border-t-4 border-t-blue-500/70">
+            <Card className="bg-[#12121a] border border-[#1e1e2e] rounded-xl h-full hover:border-[#2e2e3e] transition-colors border-t-4 border-t-blue-500/70">
                 <CardContent className="p-8">
                   <div className="w-14 h-14 rounded-xl bg-blue-500/10 flex items-center justify-center mb-6">
                     <Brain className="h-7 w-7 text-blue-500" />
                   </div>
                   <h3 className="text-xl font-semibold mb-4">Intent Analysis</h3>
                   <p className="text-sm text-[#a1a1aa] leading-relaxed">
-                    AI-powered semantic analysis using GPT-4o-mini to understand hidden goals,
-                    adversarial intent, and sophisticated attack vectors.
+                    Uses GPT-4o-mini to analyze whether the input is trying to manipulate the AI.
+                    Detects hidden intent and adversarial goals that patterns alone might miss.
                   </p>
                 </CardContent>
               </Card>
-            </motion.div>
 
             {/* Feature 3: Semantic Scanning */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.3 }}
-              viewport={{ once: true }}
-            >
-              <Card className="bg-[#12121a] border border-[#1e1e2e] rounded-xl h-full hover:border-[#2e2e3e] transition-all duration-200 border-t-4 border-t-purple-500/70">
+            <Card className="bg-[#12121a] border border-[#1e1e2e] rounded-xl h-full hover:border-[#2e2e3e] transition-colors border-t-4 border-t-purple-500/70">
                 <CardContent className="p-8">
                   <div className="w-14 h-14 rounded-xl bg-purple-500/10 flex items-center justify-center mb-6">
                     <Lock className="h-7 w-7 text-purple-500" />
                   </div>
                   <h3 className="text-xl font-semibold mb-4">Semantic Guard</h3>
                   <p className="text-sm text-[#a1a1aa] leading-relaxed">
-                    Similarity matching against known attack database using Jaccard and n-gram
-                    algorithms to catch variants and obfuscated attempts.
+                    Compares input against a database of known attacks using similarity algorithms.
+                    Catches variations and obfuscated versions of existing exploits.
                   </p>
                 </CardContent>
               </Card>
-            </motion.div>
 
             {/* Feature 4: Behavior Monitor */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.4 }}
-              viewport={{ once: true }}
-            >
-              <Card className="bg-[#12121a] border border-[#1e1e2e] rounded-xl h-full hover:border-[#2e2e3e] transition-all duration-200 border-t-4 border-t-orange-500/70">
+            <Card className="bg-[#12121a] border border-[#1e1e2e] rounded-xl h-full hover:border-[#2e2e3e] transition-colors border-t-4 border-t-orange-500/70">
                 <CardContent className="p-8">
                   <div className="w-14 h-14 rounded-xl bg-orange-500/10 flex items-center justify-center mb-6">
                     <Activity className="h-7 w-7 text-orange-500" />
                   </div>
                   <h3 className="text-xl font-semibold mb-4">Behavior Tracking</h3>
                   <p className="text-sm text-[#a1a1aa] leading-relaxed">
-                    Session-based monitoring with risk scoring to detect multi-turn attacks,
-                    repeated probing, and coordinated exploitation attempts.
+                    Tracks user sessions and builds a risk score over time. Identifies patterns
+                    like repeated attack attempts or multi-step exploitation strategies.
                   </p>
                 </CardContent>
               </Card>
-            </motion.div>
           </div>
         </div>
       </section>
@@ -210,10 +182,10 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-center mb-16"
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">How It Works</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">The Pipeline</h2>
             <p className="text-base md:text-lg text-[#71717a] max-w-3xl mx-auto leading-relaxed">
-              All layers execute in parallel for minimal latency. Decisions are made through
-              weighted consensus with explainable AI reasoning.
+              All four layers run in parallel using Promise.all. Each one votes on whether to allow,
+              flag, or block. The final decision comes from weighted consensus.
             </p>
           </motion.div>
 
@@ -318,10 +290,10 @@ export default function LandingPage() {
             transition={{ duration: 0.6 }}
             viewport={{ once: true }}
           >
-            <h2 className="text-3xl md:text-4xl font-bold mb-6">Ready to secure your AI?</h2>
+            <h2 className="text-3xl md:text-4xl font-bold mb-6">Try It Out</h2>
             <p className="text-base md:text-lg text-[#71717a] max-w-3xl mx-auto mb-12 leading-relaxed">
-              Test AEGIS with real attack scenarios in our interactive playground or explore
-              detailed analytics in the security dashboard.
+              The playground has 10+ preset attacks you can test. Each response shows you exactly
+              what each layer detected and why the decision was made.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link href="/playground">
