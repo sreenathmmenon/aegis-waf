@@ -20,6 +20,7 @@ import {
 import { ValidationResult } from "@/lib/types";
 import attackExamples from "@/lib/data/attackExamples.json";
 import legitimateExamples from "@/lib/data/legitimateExamples.json";
+import zerodayExamples from "@/lib/data/zeroday-examples.json";
 
 export default function PlaygroundPage() {
   const [input, setInput] = useState("");
@@ -249,6 +250,43 @@ export default function PlaygroundPage() {
                       <Badge variant="outline" className="text-xs">
                         {attack.category.replace('_', ' ')}
                       </Badge>
+                    </button>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Zero-Day / Novel Attacks */}
+            <Card className="border-purple-500/20 bg-purple-500/5">
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2 text-purple-400">
+                  <Zap className="h-5 w-5" />
+                  Zero-Day Attacks (Novel)
+                </CardTitle>
+                <CardDescription>
+                  Attacks NOT in our training dataset - tests AI reasoning ability
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="grid grid-cols-1 gap-3">
+                  {zerodayExamples.map((attack, idx) => (
+                    <button
+                      key={idx}
+                      onClick={() => handlePresetClick(attack.prompt)}
+                      className="text-left p-3 border border-purple-500/30 rounded-lg hover:bg-purple-500/10 hover:border-purple-500/50 transition-all"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <span className="font-semibold text-sm text-purple-300">{attack.label}</span>
+                        <Badge variant="outline" className="text-xs bg-purple-500/20 border-purple-500/40">
+                          NOVEL
+                        </Badge>
+                      </div>
+                      <p className="text-xs text-muted-foreground mb-2">
+                        {attack.why_dangerous}
+                      </p>
+                      <p className="text-xs text-purple-200/70 line-clamp-2">
+                        "{attack.prompt}"
+                      </p>
                     </button>
                   ))}
                 </div>

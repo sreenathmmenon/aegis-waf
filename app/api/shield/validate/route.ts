@@ -7,6 +7,7 @@ import { updateSession, getSessionRisk } from '@/lib/defense/behaviorMonitor';
 import { eventBus, createEventFromValidation } from '@/lib/event-bus';
 import { threatStore } from '@/lib/threat-store';
 import { sendSlackAlert } from '@/lib/alerts/slack-alert';
+import { learnFromThreat, checkLearnedPatterns } from '@/lib/learning/adaptive-learning';
 import {
   ValidationResult,
   LayerResult,
@@ -141,6 +142,16 @@ export async function POST(request: NextRequest) {
     // Update threat level based on pattern severity if not already set
     if (threatLevel === 'NONE' && patternResult.severity !== 'NONE') {
       threatLevel = patternResult.severity;
+    }
+
+    // 🧠 Adaptive Learning: Learn from blocked/flagged threats
+    if ((decision === 'BLOCK' || decision === 'FLAG') && category) {
+      try {
+        const confidence = decision === 'BLOCK' ? 90 : 60;
+        learnFromThreat(input, category, confidence, decision === 'BLOCK' ? 'block' : 'flag');
+      } catch (error) {
+        console.error('Failed to learn from threat:', error);
+      }
     }
 
     // Calculate total latency
