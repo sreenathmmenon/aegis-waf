@@ -5,6 +5,8 @@ import { usePathname } from "next/navigation";
 import Link from "next/link";
 import { Shield, BarChart3, FileText, Settings, Home, PlayCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { ThreatNotifications } from "@/components/threat-notifications";
+import { NotificationBell } from "@/components/notification-bell";
 import "./globals.css";
 
 const navItems = [
@@ -89,8 +91,11 @@ export default function RootLayout({
 
               {/* Footer */}
               <div className="border-t border-border p-4">
-                <div className="text-xs text-muted-foreground font-mono">
-                  AI WAF v1.0.0
+                <div className="flex items-center justify-between">
+                  <div className="text-xs text-muted-foreground font-mono">
+                    AI WAF v1.0.0
+                  </div>
+                  <NotificationBell />
                 </div>
               </div>
             </div>
@@ -103,6 +108,9 @@ export default function RootLayout({
             </div>
           </main>
         </div>
+
+        {/* Global Threat Notifications */}
+        <ThreatNotifications />
       </body>
     </html>
   );
