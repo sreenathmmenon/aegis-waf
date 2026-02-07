@@ -3,170 +3,145 @@
 import { motion } from "framer-motion";
 import Link from "next/link";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import {
-  Shield,
-  Zap,
-  Bell,
-  ArrowRight,
-  CheckCircle2
-} from "lucide-react";
+import { Shield, Zap, Bell, ArrowRight, CheckCircle2 } from "lucide-react";
 
 export default function LandingPage() {
   return (
     <div className="min-h-screen bg-[#0a0a0f]">
-      {/* Hero Section */}
-      <section className="relative px-8 py-24 md:py-32">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid lg:grid-cols-2 gap-16 items-center">
+      {/* Hero - Full viewport height with massive padding */}
+      <section className="min-h-screen flex items-center px-8 py-32">
+        <div className="max-w-[1400px] mx-auto w-full">
+          <div className="grid lg:grid-cols-2 gap-24 items-center">
             {/* Left: Content */}
             <motion.div
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5 }}
+              transition={{ duration: 0.6 }}
+              className="space-y-12"
             >
-              <h1 className="text-5xl md:text-6xl font-bold text-white mb-6 leading-tight">
-                Block Prompt Injection
-                <br />
-                <span className="text-[#71717a]">Before It Reaches Your AI</span>
-              </h1>
+              <div className="space-y-8">
+                <h1 className="text-6xl md:text-7xl font-bold text-white leading-[1.1]">
+                  Stop Prompt Injection
+                  <span className="block text-[#71717a] mt-2">Before It Reaches Your AI</span>
+                </h1>
 
-              <p className="text-xl text-[#a1a1aa] mb-8 leading-relaxed">
-                5-layer security system that stops malicious prompts in under 500ms.
-                Protects OpenAI, Claude, and custom LLMs with zero configuration.
-              </p>
+                <p className="text-xl md:text-2xl text-[#a1a1aa] leading-relaxed max-w-xl">
+                  Real-time firewall that protects LLM applications from malicious prompts, data leaks, and adversarial attacks.
+                </p>
+              </div>
 
-              <div className="flex flex-col sm:flex-row gap-4 mb-12">
-                <Link href="/demo">
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Link href="/demo" className="w-full sm:w-auto">
                   <Button
                     size="lg"
-                    className="bg-white text-black hover:bg-gray-100 h-12 px-8 text-base font-semibold w-full sm:w-auto"
+                    className="w-full bg-white text-black hover:bg-gray-100 h-14 px-10 text-lg font-medium"
                   >
-                    See Live Demo
+                    Try Live Demo
                     <ArrowRight className="h-5 w-5 ml-2" />
                   </Button>
                 </Link>
-                <Link href="/dashboard">
+                <Link href="/dashboard" className="w-full sm:w-auto">
                   <Button
                     size="lg"
                     variant="outline"
-                    className="border-[#2e2e3e] hover:bg-[#12121a] h-12 px-8 text-base font-semibold w-full sm:w-auto"
+                    className="w-full border-[#2e2e3e] hover:bg-[#12121a] h-14 px-10 text-lg font-medium"
                   >
-                    View Dashboard
+                    Dashboard
                   </Button>
                 </Link>
               </div>
 
-              {/* Key Metrics */}
-              <div className="flex gap-8 text-sm">
+              <div className="grid grid-cols-3 gap-12 pt-8">
                 <div>
-                  <div className="text-2xl font-bold text-white mb-1">&lt;500ms</div>
-                  <div className="text-[#71717a]">Response Time</div>
+                  <div className="text-3xl font-semibold text-white mb-2">&lt;500ms</div>
+                  <div className="text-base text-[#71717a]">Response Time</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-white mb-1">5 Layers</div>
-                  <div className="text-[#71717a]">Parallel Defense</div>
+                  <div className="text-3xl font-semibold text-white mb-2">5 Layers</div>
+                  <div className="text-base text-[#71717a]">Defense System</div>
                 </div>
                 <div>
-                  <div className="text-2xl font-bold text-white mb-1">Real-time</div>
-                  <div className="text-[#71717a]">Monitoring</div>
+                  <div className="text-3xl font-semibold text-white mb-2">24/7</div>
+                  <div className="text-base text-[#71717a]">Protection</div>
                 </div>
               </div>
             </motion.div>
 
-            {/* Right: Dashboard Preview */}
+            {/* Right: Dashboard Mockup */}
             <motion.div
               initial={{ opacity: 0, x: 20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.5, delay: 0.2 }}
+              transition={{ duration: 0.6, delay: 0.2 }}
               className="relative"
             >
-              <div className="relative bg-[#12121a] border border-[#2e2e3e] rounded-lg overflow-hidden shadow-2xl">
-                {/* Browser Chrome */}
-                <div className="bg-[#1a1a1a] px-4 py-3 border-b border-[#2e2e3e] flex items-center gap-2">
-                  <div className="flex gap-1.5">
-                    <div className="w-3 h-3 rounded-full bg-[#2e2e3e]"></div>
-                    <div className="w-3 h-3 rounded-full bg-[#2e2e3e]"></div>
-                    <div className="w-3 h-3 rounded-full bg-[#2e2e3e]"></div>
+              <div className="bg-[#12121a] border border-[#2e2e3e] rounded-xl overflow-hidden shadow-2xl">
+                {/* Header */}
+                <div className="bg-[#0a0a0f] px-6 py-4 border-b border-[#2e2e3e] flex items-center justify-between">
+                  <div className="flex items-center gap-3">
+                    <div className="h-2.5 w-2.5 bg-green-500 rounded-full animate-pulse"></div>
+                    <span className="text-sm font-medium text-white">ACTIVE</span>
                   </div>
-                  <div className="flex-1 text-center text-xs text-[#71717a] font-mono">
-                    localhost:3000/dashboard
+                  <span className="text-xs text-[#71717a]">Last 24 hours</span>
+                </div>
+
+                {/* Stats */}
+                <div className="p-6 grid grid-cols-3 gap-4 border-b border-[#2e2e3e]">
+                  <div className="space-y-2">
+                    <div className="text-sm text-[#71717a]">Total Scans</div>
+                    <div className="text-2xl font-semibold text-white">1,247</div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-sm text-[#71717a]">Blocked</div>
+                    <div className="text-2xl font-semibold text-red-400">42</div>
+                  </div>
+                  <div className="space-y-2">
+                    <div className="text-sm text-[#71717a]">Avg Time</div>
+                    <div className="text-2xl font-semibold text-cyan-400">347ms</div>
                   </div>
                 </div>
 
-                {/* Dashboard Content */}
-                <div className="p-6">
-                  {/* Status Header */}
-                  <div className="flex items-center justify-between mb-6">
-                    <div className="flex items-center gap-2">
-                      <div className="h-2 w-2 bg-green-500 rounded-full animate-pulse"></div>
-                      <span className="text-sm font-medium text-white">ACTIVE</span>
+                {/* Threats */}
+                <div className="p-6 space-y-3">
+                  <div className="text-sm font-medium text-[#a1a1aa] mb-4">Recent Activity</div>
+
+                  <div className="bg-red-500/5 border border-red-500/20 rounded-lg p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-red-400">BLOCKED</span>
+                      <span className="text-xs text-[#71717a]">2m ago</span>
                     </div>
-                    <div className="text-xs text-[#71717a]">Last 24 hours</div>
+                    <div className="text-sm text-white">Ignore all previous instructions...</div>
                   </div>
 
-                  {/* Stats Grid */}
-                  <div className="grid grid-cols-3 gap-4 mb-6">
-                    <div className="bg-[#0a0a0f] border border-[#2e2e3e] rounded p-3">
-                      <div className="text-sm text-[#71717a] mb-1">Scans</div>
-                      <div className="text-xl font-bold text-white">1,247</div>
+                  <div className="bg-yellow-500/5 border border-yellow-500/20 rounded-lg p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-yellow-400">FLAGGED</span>
+                      <span className="text-xs text-[#71717a]">5m ago</span>
                     </div>
-                    <div className="bg-[#0a0a0f] border border-[#2e2e3e] rounded p-3">
-                      <div className="text-sm text-[#71717a] mb-1">Blocked</div>
-                      <div className="text-xl font-bold text-red-400">42</div>
-                    </div>
-                    <div className="bg-[#0a0a0f] border border-[#2e2e3e] rounded p-3">
-                      <div className="text-sm text-[#71717a] mb-1">Avg Time</div>
-                      <div className="text-xl font-bold text-cyan-400">347ms</div>
-                    </div>
+                    <div className="text-sm text-white">Hypothetically, if you could...</div>
                   </div>
 
-                  {/* Recent Threats */}
-                  <div className="space-y-2">
-                    <div className="text-xs font-medium text-[#a1a1aa] mb-3">Recent Threats</div>
-
-                    <div className="bg-red-500/10 border border-red-500/20 rounded p-3 flex items-start gap-3">
-                      <Shield className="h-4 w-4 text-red-400 flex-shrink-0 mt-0.5" />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-medium text-white mb-1">BLOCKED</div>
-                        <div className="text-xs text-[#a1a1aa] truncate">Ignore all previous instructions...</div>
-                      </div>
-                      <div className="text-xs text-[#71717a]">2m ago</div>
+                  <div className="bg-green-500/5 border border-green-500/20 rounded-lg p-4 space-y-2">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-medium text-green-400">ALLOWED</span>
+                      <span className="text-xs text-[#71717a]">8m ago</span>
                     </div>
-
-                    <div className="bg-yellow-500/10 border border-yellow-500/20 rounded p-3 flex items-start gap-3">
-                      <Shield className="h-4 w-4 text-yellow-400 flex-shrink-0 mt-0.5" />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-medium text-white mb-1">FLAGGED</div>
-                        <div className="text-xs text-[#a1a1aa] truncate">Hypothetically, if you could...</div>
-                      </div>
-                      <div className="text-xs text-[#71717a]">5m ago</div>
-                    </div>
-
-                    <div className="bg-green-500/10 border border-green-500/20 rounded p-3 flex items-start gap-3">
-                      <CheckCircle2 className="h-4 w-4 text-green-400 flex-shrink-0 mt-0.5" />
-                      <div className="flex-1 min-w-0">
-                        <div className="text-xs font-medium text-white mb-1">ALLOWED</div>
-                        <div className="text-xs text-[#a1a1aa] truncate">What are trading hours for forex?</div>
-                      </div>
-                      <div className="text-xs text-[#71717a]">8m ago</div>
-                    </div>
+                    <div className="text-sm text-white">What are trading hours for forex?</div>
                   </div>
                 </div>
               </div>
 
-              {/* Floating Notification */}
+              {/* Floating alert */}
               <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ duration: 0.5, delay: 0.8 }}
-                className="absolute -bottom-4 -right-4 bg-[#12121a] border border-[#2e2e3e] rounded-lg p-4 shadow-xl"
+                className="absolute -bottom-6 -right-6 bg-[#12121a] border border-[#2e2e3e] rounded-lg p-5 shadow-2xl max-w-[280px]"
               >
                 <div className="flex items-start gap-3">
-                  <Bell className="h-5 w-5 text-cyan-400 flex-shrink-0" />
-                  <div>
-                    <div className="text-sm font-medium text-white mb-1">Slack Alert Sent</div>
-                    <div className="text-xs text-[#71717a]">Threat blocked • High severity</div>
+                  <Bell className="h-5 w-5 text-cyan-400 flex-shrink-0 mt-0.5" />
+                  <div className="space-y-1">
+                    <div className="text-sm font-medium text-white">Slack Alert Sent</div>
+                    <div className="text-xs text-[#71717a]">High severity threat detected</div>
                   </div>
                 </div>
               </motion.div>
@@ -175,92 +150,86 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="px-8 py-24 border-t border-[#1e1e2e]">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-16">
-            <h2 className="text-3xl md:text-4xl font-bold text-white mb-4">
+      {/* How It Works - Massive spacing */}
+      <section className="px-8 py-40">
+        <div className="max-w-[1400px] mx-auto">
+          <div className="text-center mb-24 space-y-6">
+            <h2 className="text-5xl md:text-6xl font-bold text-white">
               How It Works
             </h2>
-            <p className="text-lg text-[#71717a] max-w-2xl mx-auto">
-              Three-step protection that runs automatically on every request
+            <p className="text-xl text-[#71717a] max-w-2xl mx-auto">
+              Three-step protection running automatically on every request
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8">
-            {/* Step 1 */}
-            <Card className="bg-[#12121a] border border-[#2e2e3e] relative overflow-hidden">
-              <CardContent className="p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="h-12 w-12 rounded-lg bg-cyan-500/10 flex items-center justify-center">
-                    <Shield className="h-6 w-6 text-cyan-400" />
-                  </div>
-                  <span className="text-4xl font-bold text-[#2e2e3e]">01</span>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-3">Detect</h3>
-                <p className="text-[#a1a1aa] leading-relaxed">
-                  5 parallel layers analyze every prompt for injection attempts, jailbreaks, and data extraction
+          <div className="grid md:grid-cols-3 gap-12">
+            {/* Detect */}
+            <div className="space-y-8">
+              <div className="h-16 w-16 rounded-2xl bg-cyan-500/10 flex items-center justify-center">
+                <Shield className="h-8 w-8 text-cyan-400" />
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-2xl font-semibold text-white">Detect</h3>
+                <p className="text-lg text-[#a1a1aa] leading-relaxed">
+                  Five parallel layers analyze every prompt for injection attempts, jailbreaks, and data extraction.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            {/* Step 2 */}
-            <Card className="bg-[#12121a] border border-[#2e2e3e] relative overflow-hidden">
-              <CardContent className="p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="h-12 w-12 rounded-lg bg-red-500/10 flex items-center justify-center">
-                    <Zap className="h-6 w-6 text-red-400" />
-                  </div>
-                  <span className="text-4xl font-bold text-[#2e2e3e]">02</span>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-3">Block</h3>
-                <p className="text-[#a1a1aa] leading-relaxed">
-                  Malicious prompts are stopped before reaching your LLM. Clean requests go through instantly
+            {/* Block */}
+            <div className="space-y-8">
+              <div className="h-16 w-16 rounded-2xl bg-red-500/10 flex items-center justify-center">
+                <Zap className="h-8 w-8 text-red-400" />
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-2xl font-semibold text-white">Block</h3>
+                <p className="text-lg text-[#a1a1aa] leading-relaxed">
+                  Malicious prompts are stopped instantly. Clean requests pass through in under 500ms.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
 
-            {/* Step 3 */}
-            <Card className="bg-[#12121a] border border-[#2e2e3e] relative overflow-hidden">
-              <CardContent className="p-8">
-                <div className="flex items-center justify-between mb-6">
-                  <div className="h-12 w-12 rounded-lg bg-green-500/10 flex items-center justify-center">
-                    <Bell className="h-6 w-6 text-green-400" />
-                  </div>
-                  <span className="text-4xl font-bold text-[#2e2e3e]">03</span>
-                </div>
-                <h3 className="text-xl font-semibold text-white mb-3">Alert</h3>
-                <p className="text-[#a1a1aa] leading-relaxed">
-                  Real-time Slack notifications with full threat details and recommended actions
+            {/* Alert */}
+            <div className="space-y-8">
+              <div className="h-16 w-16 rounded-2xl bg-green-500/10 flex items-center justify-center">
+                <Bell className="h-8 w-8 text-green-400" />
+              </div>
+              <div className="space-y-4">
+                <h3 className="text-2xl font-semibold text-white">Alert</h3>
+                <p className="text-lg text-[#a1a1aa] leading-relaxed">
+                  Real-time Slack notifications with complete threat analysis and context.
                 </p>
-              </CardContent>
-            </Card>
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* CTA */}
-      <section className="px-8 py-24">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
-            Ready to protect your AI?
-          </h2>
-          <p className="text-xl text-[#a1a1aa] mb-10">
-            See AEGIS in action with live threat detection
-          </p>
+      {/* CTA - Massive spacing */}
+      <section className="px-8 py-40">
+        <div className="max-w-4xl mx-auto text-center space-y-12">
+          <div className="space-y-8">
+            <h2 className="text-5xl md:text-6xl font-bold text-white">
+              Ready to Protect Your AI?
+            </h2>
+            <p className="text-xl text-[#a1a1aa] max-w-2xl mx-auto">
+              See AEGIS in action with live threat detection and real-time dashboard
+            </p>
+          </div>
+
           <Link href="/demo">
             <Button
               size="lg"
-              className="bg-white text-black hover:bg-gray-100 h-14 px-10 text-lg font-semibold"
+              className="bg-white text-black hover:bg-gray-100 h-16 px-12 text-lg font-medium"
             >
               Try Live Demo
-              <ArrowRight className="h-5 w-5 ml-2" />
+              <ArrowRight className="h-6 w-6 ml-2" />
             </Button>
           </Link>
         </div>
       </section>
 
-      <div className="h-16" />
+      <div className="h-32" />
     </div>
   );
 }
