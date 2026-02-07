@@ -152,15 +152,37 @@ export default function DemoPage() {
         };
         setMessages(prev => [...prev, systemMessage]);
 
-        // Add mock LLM response
-        setTimeout(() => {
-          const llmMessage: Message = {
-            id: `msg_${Date.now()}_llm`,
-            type: 'llm',
-            content: generateMockResponse(input),
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, llmMessage]);
+        // Add real LLM response (protected by AEGIS)
+        setTimeout(async () => {
+          try {
+            const llmResponse = await fetch('/api/llm/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                message: input,
+                provider: process.env.NEXT_PUBLIC_LLM_PROVIDER || 'openai'
+              })
+            });
+
+            const llmData = await llmResponse.json();
+
+            const llmMessage: Message = {
+              id: `msg_${Date.now()}_llm`,
+              type: 'llm',
+              content: llmData.response || llmData.error || 'Error generating response',
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, llmMessage]);
+          } catch (error) {
+            console.error('LLM error:', error);
+            const errorMessage: Message = {
+              id: `msg_${Date.now()}_llm`,
+              type: 'llm',
+              content: 'Error: Unable to generate response',
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, errorMessage]);
+          }
         }, 500);
       } else {
         // ALLOW - add system message + LLM response
@@ -173,14 +195,36 @@ export default function DemoPage() {
         };
         setMessages(prev => [...prev, systemMessage]);
 
-        setTimeout(() => {
-          const llmMessage: Message = {
-            id: `msg_${Date.now()}_llm`,
-            type: 'llm',
-            content: generateMockResponse(input),
-            timestamp: new Date()
-          };
-          setMessages(prev => [...prev, llmMessage]);
+        setTimeout(async () => {
+          try {
+            const llmResponse = await fetch('/api/llm/chat', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({
+                message: input,
+                provider: process.env.NEXT_PUBLIC_LLM_PROVIDER || 'openai'
+              })
+            });
+
+            const llmData = await llmResponse.json();
+
+            const llmMessage: Message = {
+              id: `msg_${Date.now()}_llm`,
+              type: 'llm',
+              content: llmData.response || llmData.error || 'Error generating response',
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, llmMessage]);
+          } catch (error) {
+            console.error('LLM error:', error);
+            const errorMessage: Message = {
+              id: `msg_${Date.now()}_llm`,
+              type: 'llm',
+              content: 'Error: Unable to generate response',
+              timestamp: new Date()
+            };
+            setMessages(prev => [...prev, errorMessage]);
+          }
         }, 500);
       }
     } catch (error) {
@@ -597,34 +641,4 @@ function getThreatColor(level: string): string {
   }
 }
 
-function generateMockResponse(input: string): string {
-  // Simple mock responses based on input
-  const lowerInput = input.toLowerCase();
-
-  // Fintech responses
-  if (lowerInput.includes('trading hours') || lowerInput.includes('synthetic indices')) {
-    return "Synthetic indices are available for trading 24/7, including weekends and holidays. They simulate real-world market movements and are not affected by market closures or holidays.";
-  }
-
-  if (lowerInput.includes('margin') || lowerInput.includes('leverage')) {
-    return "Margin calculation depends on your leverage ratio. For 1:100 leverage, you need 1% of the position value as margin. For example, to open a $10,000 position, you'd need $100 in margin. Higher leverage increases both potential profits and risks.";
-  }
-
-  if (lowerInput.includes('kyc') || lowerInput.includes('verification')) {
-    return "For KYC verification, you'll need: 1) A valid government-issued photo ID (passport, driver's license, or national ID card), 2) Proof of address dated within the last 6 months (utility bill, bank statement, or tax document). Upload clear photos or scans of these documents in your account settings.";
-  }
-
-  if (lowerInput.includes('weather')) {
-    return "I don't have access to real-time weather data, but I can help you find weather information. Try checking weather.com or your local weather service.";
-  }
-
-  if (lowerInput.includes('password')) {
-    return "To reset your password, please visit the account settings page and click on 'Forgot Password'. You'll receive a reset link via email.";
-  }
-
-  if (lowerInput.includes('machine learning')) {
-    return "Machine learning is a subset of AI where computers learn patterns from data without being explicitly programmed. It uses algorithms to identify patterns and make predictions based on training data.";
-  }
-
-  return "I understand your query. This is a mock response from the trading assistant showing that the request was allowed by AEGIS and processed successfully.";
-}
+// Mock response function removed - now using real LLM via /api/llm/chat

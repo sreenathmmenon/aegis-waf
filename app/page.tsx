@@ -15,8 +15,10 @@ import {
   Activity,
   CheckCircle2,
   ArrowRight,
-  Code
+  Code,
+  Database
 } from "lucide-react";
+import { getDatasetStats } from "@/lib/data/load-dataset";
 
 export default function LandingPage() {
   return (
@@ -64,7 +66,7 @@ export default function LandingPage() {
             </div>
 
             {/* Live Stats Bar */}
-            <div className="bg-[#12121a]/50 border border-[#1e1e2e] rounded-xl p-6">
+            <div className="bg-[#12121a]/50 border border-[#1e1e2e] rounded-xl p-6 mb-4">
               <div className="flex items-center justify-center gap-6 md:gap-12 flex-wrap text-sm md:text-base">
                 <motion.div
                   className="flex items-center gap-2"
@@ -106,6 +108,22 @@ export default function LandingPage() {
                   <span className="text-[#71717a]">Accuracy</span>
                 </motion.div>
               </div>
+            </div>
+
+            {/* Dataset Attribution Badge */}
+            <div className="flex items-center justify-center gap-3 text-xs text-[#71717a]">
+              <Database className="h-4 w-4 text-cyan-500" />
+              <span>Powered by <span className="text-cyan-400 font-medium">HuggingFace datasets</span></span>
+              <Badge variant="outline" className="bg-cyan-500/5 text-cyan-400 border-cyan-500/20 text-xs">
+                {(() => {
+                  try {
+                    const stats = getDatasetStats();
+                    return `${stats.attacks} attack patterns`;
+                  } catch {
+                    return 'Public datasets';
+                  }
+                })()}
+              </Badge>
             </div>
           </motion.div>
         </div>
