@@ -4,6 +4,8 @@ import { classifyIntent } from '@/lib/defense/intentClassifier';
 import { scanSemantic } from '@/lib/defense/semanticScanner';
 import { generateExplanation } from '@/lib/defense/explanationEngine';
 import { updateSession, getSessionRisk } from '@/lib/defense/behaviorMonitor';
+import { eventBus, createEventFromValidation } from '@/lib/event-bus';
+import { threatStore } from '@/lib/threat-store';
 import {
   ValidationResult,
   LayerResult,
@@ -195,6 +197,16 @@ export async function POST(request: NextRequest) {
         console.error('Failed to update session:', error);
         // Continue without session tracking
       }
+    }
+
+    // Step 7: Publish event to event bus for real-time monitoring
+    try {
+      const event = createEventFromValidation(validationResult);
+      eventBus.publish(event);
+      threatStore.add(event);
+    } catch (error) {
+      console.error('Failed to publish event:', error);
+      // Continue without event publishing
     }
 
     // Return successful response
