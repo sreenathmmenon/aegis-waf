@@ -114,10 +114,10 @@ export default function DashboardPage() {
                 Real-time threat monitoring and analysis
               </p>
             </div>
-            <div className="flex items-center gap-2">
-              <div className={`h-2 w-2 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
-              <span className="text-xs text-muted-foreground">
-                {isConnected ? 'Live' : 'Disconnected'}
+            <div className="flex items-center gap-3 bg-surface border border-border rounded-lg px-4 py-2">
+              <div className={`h-2.5 w-2.5 rounded-full ${isConnected ? 'bg-green-500 animate-pulse' : 'bg-red-500'}`} />
+              <span className={`text-sm font-semibold font-mono ${isConnected ? 'text-green-500' : 'text-red-500'}`}>
+                {isConnected ? '● ACTIVE' : '● DISCONNECTED'}
               </span>
             </div>
           </div>
