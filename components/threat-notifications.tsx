@@ -27,11 +27,11 @@ export function ThreatNotifications() {
 
     const latestEvent = events[0]; // Most recent event
 
-    // Don't show toast for ALLOW events (too noisy)
-    if (latestEvent.action === 'ALLOW') return;
+    // Only show BLOCK events (skip ALLOW and FLAG - too noisy)
+    if (latestEvent.action !== 'BLOCK') return;
 
-    // Create toast with expiry
-    const duration = latestEvent.action === 'BLOCK' ? 5000 : 4000;
+    // Create toast with expiry (3 seconds for cleaner UX)
+    const duration = 3000;
     const newToast: ToastNotification = {
       ...latestEvent,
       toastId: `toast_${latestEvent.id}`,
