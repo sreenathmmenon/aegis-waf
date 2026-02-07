@@ -2,7 +2,7 @@
 
 **Multi-layered AI firewall protecting LLM applications from prompt injection attacks**
 
-Built for [Deriv AI Talent Sprint Hackathon](https://lablab.ai/ai-hackathons/deriv-ai-talent-sprint) - Security Track
+Enterprise-grade AI security solution for LLM applications
 
 🔗 **Live Demo:** https://aegis-waf.vercel.app
 
@@ -275,10 +275,9 @@ MIT © 2026 Sreenath
 
 ## 🙏 Acknowledgments
 
-- Deriv AI Talent Sprint Hackathon
 - OWASP LLM Top 10
 - Security research from PromptGuard, Lakera
 
 ---
 
-**⚡ Made for the hackathon with speed & security**
+**⚡ Built with security and performance in mind**
