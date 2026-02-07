@@ -4,367 +4,377 @@ import { useState } from "react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Switch } from "@/components/ui/switch";
+import { Slider } from "@/components/ui/slider";
 import { Separator } from "@/components/ui/separator";
-import { Shield, AlertTriangle, Settings, Plus, Save, RefreshCw } from "lucide-react";
+import {
+  Shield,
+  Brain,
+  Lock,
+  Activity,
+  Settings,
+  Save,
+  RotateCcw,
+  AlertCircle,
+  CheckCircle2,
+  Eye
+} from "lucide-react";
 
 export default function PoliciesPage() {
-  const [thresholds, setThresholds] = useState({
-    confidence: 0.85,
-    latency: 100,
-    blockRate: 0.1
-  });
+  // Defense layer toggles
+  const [patternEnabled, setPatternEnabled] = useState(true);
+  const [intentEnabled, setIntentEnabled] = useState(true);
+  const [semanticEnabled, setSemanticEnabled] = useState(true);
+  const [behaviorEnabled, setBehaviorEnabled] = useState(true);
+
+  // Threshold sliders
+  const [patternThreshold, setPatternThreshold] = useState([80]);
+  const [intentThreshold, setIntentThreshold] = useState([70]);
+  const [semanticThreshold, setSemanticThreshold] = useState([85]);
+  const [behaviorThreshold, setBehaviorThreshold] = useState([80]);
+
+  // Blocklist and allowlist
+  const [blocklist, setBlocklist] = useState(
+    `ignore previous instructions\nforget everything\nyou are now DAN\nrepeat after me`
+  );
+  const [allowlist, setAllowlist] = useState(
+    `system health check\ninternal monitoring\nlegitimate test query`
+  );
+
+  const [saveStatus, setSaveStatus] = useState<"idle" | "saving" | "saved">("idle");
+
+  const handleSave = () => {
+    setSaveStatus("saving");
+    // Simulate save operation
+    setTimeout(() => {
+      setSaveStatus("saved");
+      setTimeout(() => setSaveStatus("idle"), 2000);
+    }, 1000);
+  };
+
+  const handleReset = () => {
+    setPatternEnabled(true);
+    setIntentEnabled(true);
+    setSemanticEnabled(true);
+    setBehaviorEnabled(true);
+    setPatternThreshold([80]);
+    setIntentThreshold([70]);
+    setSemanticThreshold([85]);
+    setBehaviorThreshold([80]);
+  };
 
   return (
-    <div className="p-8">
-      <div className="max-w-7xl mx-auto">
+    <div className="p-8 min-h-screen">
+      <div className="max-w-6xl mx-auto">
+        {/* Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold mb-2">Policies</h1>
+          <h1 className="text-4xl font-bold mb-2 text-gradient">Security Policies</h1>
           <p className="text-muted-foreground">
-            Configure firewall behavior and security policies
+            Configure defense layers, thresholds, and custom rules for your AI firewall
           </p>
         </div>
 
-        <Tabs defaultValue="general" className="w-full">
-          <TabsList>
-            <TabsTrigger value="general">General</TabsTrigger>
-            <TabsTrigger value="patterns">Pattern Rules</TabsTrigger>
-            <TabsTrigger value="thresholds">Thresholds</TabsTrigger>
-            <TabsTrigger value="allowlist">Allowlist</TabsTrigger>
-            <TabsTrigger value="blocklist">Blocklist</TabsTrigger>
-          </TabsList>
+        {/* Info Banner */}
+        <Card className="bg-blue-500/5 border-blue-500/50 mb-6">
+          <CardContent className="p-4 flex items-start gap-3">
+            <AlertCircle className="h-5 w-5 text-blue-500 mt-0.5" />
+            <div className="text-sm text-muted-foreground">
+              <strong className="text-foreground">Demo Mode:</strong> Configuration changes are
+              visual only and will not persist. In production, these settings would be stored
+              in your security policy database.
+            </div>
+          </CardContent>
+        </Card>
 
-          <TabsContent value="general" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Defense Configuration</CardTitle>
-                <CardDescription>
-                  Configure which defense layers are active
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Shield className="h-5 w-5 text-green-500" />
-                    <div>
-                      <div className="font-semibold">Pattern Detection</div>
-                      <div className="text-sm text-muted-foreground">
-                        Regex-based pattern matching
-                      </div>
-                    </div>
-                  </div>
-                  <Badge className="bg-green-500/10 text-green-500">
-                    ENABLED
-                  </Badge>
+        {/* Defense Layers Configuration */}
+        <Card className="bg-surface border-border mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Shield className="h-5 w-5" />
+              Defense Layers
+            </CardTitle>
+            <CardDescription>
+              Enable or disable individual security layers. Disabled layers will be skipped
+              during validation.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-6">
+            {/* Pattern Detection */}
+            <div className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border">
+              <div className="flex items-start gap-4 flex-1">
+                <div className="h-10 w-10 rounded-lg bg-green-500/10 flex items-center justify-center">
+                  <Eye className="h-5 w-5 text-green-500" />
                 </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold">Pattern Detection</h3>
+                    <Badge variant="outline" className="text-xs">Regex-based</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Zero-latency detection of known attack patterns using regex rules
+                  </p>
+                </div>
+              </div>
+              <Switch checked={patternEnabled} onCheckedChange={setPatternEnabled} />
+            </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Shield className="h-5 w-5 text-blue-500" />
-                    <div>
-                      <div className="font-semibold">Intent Classification</div>
-                      <div className="text-sm text-muted-foreground">
-                        AI-powered intent analysis
-                      </div>
-                    </div>
-                  </div>
-                  <Badge className="bg-green-500/10 text-green-500">
-                    ENABLED
-                  </Badge>
+            {/* Intent Classification */}
+            <div className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border">
+              <div className="flex items-start gap-4 flex-1">
+                <div className="h-10 w-10 rounded-lg bg-blue-500/10 flex items-center justify-center">
+                  <Brain className="h-5 w-5 text-blue-500" />
                 </div>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold">Intent Classification</h3>
+                    <Badge variant="outline" className="text-xs">AI-powered</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    AI analysis to detect hidden malicious intent and adversarial goals
+                  </p>
+                </div>
+              </div>
+              <Switch checked={intentEnabled} onCheckedChange={setIntentEnabled} />
+            </div>
 
-                <div className="flex items-center justify-between p-4 border rounded-lg">
-                  <div className="flex items-center gap-3">
-                    <Shield className="h-5 w-5 text-purple-500" />
-                    <div>
-                      <div className="font-semibold">Semantic Analysis</div>
-                      <div className="text-sm text-muted-foreground">
-                        Embedding-based similarity detection
-                      </div>
-                    </div>
-                  </div>
-                  <Badge className="bg-green-500/10 text-green-500">
-                    ENABLED
-                  </Badge>
+            {/* Semantic Scanning */}
+            <div className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border">
+              <div className="flex items-start gap-4 flex-1">
+                <div className="h-10 w-10 rounded-lg bg-purple-500/10 flex items-center justify-center">
+                  <Lock className="h-5 w-5 text-purple-500" />
                 </div>
-              </CardContent>
-            </Card>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold">Semantic Guard</h3>
+                    <Badge variant="outline" className="text-xs">Similarity-based</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Similarity matching against known attack database to catch variants
+                  </p>
+                </div>
+              </div>
+              <Switch checked={semanticEnabled} onCheckedChange={setSemanticEnabled} />
+            </div>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Default Actions</CardTitle>
-                <CardDescription>
-                  Configure default behavior for different threat levels
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
-                  <div>
-                    <label className="text-sm font-medium">Critical Threats</label>
-                    <Select defaultValue="block">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="block">Block</SelectItem>
-                        <SelectItem value="flag">Flag</SelectItem>
-                        <SelectItem value="allow">Allow</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">High Threats</label>
-                    <Select defaultValue="block">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="block">Block</SelectItem>
-                        <SelectItem value="flag">Flag</SelectItem>
-                        <SelectItem value="allow">Allow</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Medium Threats</label>
-                    <Select defaultValue="flag">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="block">Block</SelectItem>
-                        <SelectItem value="flag">Flag</SelectItem>
-                        <SelectItem value="allow">Allow</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div>
-                    <label className="text-sm font-medium">Low Threats</label>
-                    <Select defaultValue="allow">
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="block">Block</SelectItem>
-                        <SelectItem value="flag">Flag</SelectItem>
-                        <SelectItem value="allow">Allow</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
+            {/* Behavior Monitor */}
+            <div className="flex items-center justify-between p-4 rounded-lg bg-surface/50 border border-border">
+              <div className="flex items-start gap-4 flex-1">
+                <div className="h-10 w-10 rounded-lg bg-yellow-500/10 flex items-center justify-center">
+                  <Activity className="h-5 w-5 text-yellow-500" />
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                <div className="flex-1">
+                  <div className="flex items-center gap-2 mb-1">
+                    <h3 className="font-semibold">Behavior Monitor</h3>
+                    <Badge variant="outline" className="text-xs">Session-based</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">
+                    Track session behavior and detect repeated probing attempts
+                  </p>
+                </div>
+              </div>
+              <Switch checked={behaviorEnabled} onCheckedChange={setBehaviorEnabled} />
+            </div>
+          </CardContent>
+        </Card>
 
-          <TabsContent value="patterns" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Pattern Rules</CardTitle>
-                    <CardDescription>
-                      Define custom regex patterns for threat detection
-                    </CardDescription>
-                  </div>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Pattern
-                  </Button>
+        {/* Threat Thresholds */}
+        <Card className="bg-surface border-border mb-6">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Settings className="h-5 w-5" />
+              Detection Thresholds
+            </CardTitle>
+            <CardDescription>
+              Adjust confidence thresholds for blocking decisions. Higher values reduce false
+              positives but may miss some threats.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-8">
+            {/* Pattern Threshold */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="font-medium">Pattern Detection Threshold</label>
+                  <p className="text-sm text-muted-foreground">
+                    Minimum confidence to block based on pattern matching
+                  </p>
                 </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                {[
-                  {
-                    name: "Direct Injection Pattern",
-                    pattern: "/ignore.*previous.*instructions/i",
-                    severity: "HIGH",
-                    enabled: true
-                  },
-                  {
-                    name: "Jailbreak Attempt",
-                    pattern: "/pretend.*you.*are|act.*as.*if/i",
-                    severity: "MEDIUM",
-                    enabled: true
-                  },
-                  {
-                    name: "Data Exfiltration",
-                    pattern: "/repeat.*everything.*above|show.*system.*prompt/i",
-                    severity: "CRITICAL",
-                    enabled: true
-                  }
-                ].map((rule, index) => (
-                  <div key={index} className="flex items-center justify-between p-4 border rounded-lg">
-                    <div className="flex-1">
-                      <div className="font-semibold">{rule.name}</div>
-                      <code className="text-xs text-muted-foreground">{rule.pattern}</code>
-                    </div>
-                    <div className="flex items-center gap-3">
-                      <Badge
-                        variant="outline"
-                        className={
-                          rule.severity === 'CRITICAL' ? 'text-red-500' :
-                          rule.severity === 'HIGH' ? 'text-orange-500' :
-                          'text-yellow-500'
-                        }
-                      >
-                        {rule.severity}
-                      </Badge>
-                      <Badge className={rule.enabled ? 'bg-green-500/10 text-green-500' : 'bg-gray-500/10 text-gray-500'}>
-                        {rule.enabled ? 'ENABLED' : 'DISABLED'}
-                      </Badge>
-                    </div>
-                  </div>
-                ))}
-              </CardContent>
-            </Card>
-          </TabsContent>
+                <Badge variant="outline" className="font-mono">
+                  {patternThreshold[0]}%
+                </Badge>
+              </div>
+              <Slider
+                value={patternThreshold}
+                onValueChange={setPatternThreshold}
+                min={0}
+                max={100}
+                step={5}
+                disabled={!patternEnabled}
+                className="w-full"
+              />
+            </div>
 
-          <TabsContent value="thresholds" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <CardTitle>Performance Thresholds</CardTitle>
-                <CardDescription>
-                  Set limits and thresholds for various metrics
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Minimum Confidence for Block: {(thresholds.confidence * 100).toFixed(0)}%
-                  </label>
-                  <Input
-                    type="range"
-                    min="0"
-                    max="100"
-                    value={thresholds.confidence * 100}
-                    onChange={(e) => setThresholds({...thresholds, confidence: Number(e.target.value) / 100})}
-                    className="w-full"
-                  />
-                </div>
+            <Separator />
 
-                <Separator />
+            {/* Intent Threshold */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="font-medium">Intent Classification Threshold</label>
+                  <p className="text-sm text-muted-foreground">
+                    Minimum confidence to block based on AI intent analysis
+                  </p>
+                </div>
+                <Badge variant="outline" className="font-mono">
+                  {intentThreshold[0]}%
+                </Badge>
+              </div>
+              <Slider
+                value={intentThreshold}
+                onValueChange={setIntentThreshold}
+                min={0}
+                max={100}
+                step={5}
+                disabled={!intentEnabled}
+                className="w-full"
+              />
+            </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Maximum Acceptable Latency: {thresholds.latency}ms
-                  </label>
-                  <Input
-                    type="range"
-                    min="10"
-                    max="500"
-                    value={thresholds.latency}
-                    onChange={(e) => setThresholds({...thresholds, latency: Number(e.target.value)})}
-                    className="w-full"
-                  />
-                </div>
+            <Separator />
 
-                <Separator />
+            {/* Semantic Threshold */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="font-medium">Semantic Similarity Threshold</label>
+                  <p className="text-sm text-muted-foreground">
+                    Minimum similarity to known attacks for blocking
+                  </p>
+                </div>
+                <Badge variant="outline" className="font-mono">
+                  {semanticThreshold[0]}%
+                </Badge>
+              </div>
+              <Slider
+                value={semanticThreshold}
+                onValueChange={setSemanticThreshold}
+                min={0}
+                max={100}
+                step={5}
+                disabled={!semanticEnabled}
+                className="w-full"
+              />
+            </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">
-                    Alert if Block Rate Exceeds: {(thresholds.blockRate * 100).toFixed(0)}%
-                  </label>
-                  <Input
-                    type="range"
-                    min="0"
-                    max="50"
-                    value={thresholds.blockRate * 100}
-                    onChange={(e) => setThresholds({...thresholds, blockRate: Number(e.target.value) / 100})}
-                    className="w-full"
-                  />
-                </div>
+            <Separator />
 
-                <div className="flex gap-2">
-                  <Button>
-                    <Save className="h-4 w-4 mr-2" />
-                    Save Thresholds
-                  </Button>
-                  <Button variant="outline">
-                    <RefreshCw className="h-4 w-4 mr-2" />
-                    Reset to Defaults
-                  </Button>
+            {/* Behavior Threshold */}
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <label className="font-medium">Behavior Risk Threshold</label>
+                  <p className="text-sm text-muted-foreground">
+                    Session risk score threshold for escalating FLAG to BLOCK
+                  </p>
                 </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+                <Badge variant="outline" className="font-mono">
+                  {behaviorThreshold[0]}%
+                </Badge>
+              </div>
+              <Slider
+                value={behaviorThreshold}
+                onValueChange={setBehaviorThreshold}
+                min={0}
+                max={100}
+                step={5}
+                disabled={!behaviorEnabled}
+                className="w-full"
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-          <TabsContent value="allowlist" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Allowlist</CardTitle>
-                    <CardDescription>
-                      IP addresses and patterns that bypass security checks
-                    </CardDescription>
-                  </div>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Entry
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <code className="text-sm">192.168.1.0/24</code>
-                    <div className="flex gap-2">
-                      <Badge variant="outline">Internal Network</Badge>
-                      <Button variant="ghost" size="sm">Remove</Button>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <code className="text-sm">10.0.0.0/8</code>
-                    <div className="flex gap-2">
-                      <Badge variant="outline">VPN Range</Badge>
-                      <Button variant="ghost" size="sm">Remove</Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
+        {/* Custom Rules */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+          {/* Blocklist */}
+          <Card className="bg-surface border-border">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <AlertCircle className="h-5 w-5 text-red-500" />
+                Blocklist Patterns
+              </CardTitle>
+              <CardDescription>
+                Custom phrases to always block (one per line)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                value={blocklist}
+                onChange={(e) => setBlocklist(e.target.value)}
+                placeholder="Enter phrases to block, one per line..."
+                className="font-mono text-sm min-h-[200px] bg-background"
+              />
+              <p className="text-xs text-muted-foreground mt-2">
+                {blocklist.split("\n").filter((line) => line.trim()).length} patterns defined
+              </p>
+            </CardContent>
+          </Card>
 
-          <TabsContent value="blocklist" className="space-y-6">
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Blocklist</CardTitle>
-                    <CardDescription>
-                      IP addresses and patterns that are always blocked
-                    </CardDescription>
-                  </div>
-                  <Button>
-                    <Plus className="h-4 w-4 mr-2" />
-                    Add Entry
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <code className="text-sm">203.0.113.42</code>
-                    <div className="flex gap-2">
-                      <Badge variant="outline" className="text-red-500">Known Attacker</Badge>
-                      <Button variant="ghost" size="sm">Remove</Button>
-                    </div>
-                  </div>
-                  <div className="flex items-center justify-between p-3 border rounded-lg">
-                    <code className="text-sm">198.51.100.0/24</code>
-                    <div className="flex gap-2">
-                      <Badge variant="outline" className="text-red-500">Suspicious Range</Badge>
-                      <Button variant="ghost" size="sm">Remove</Button>
-                    </div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          </TabsContent>
-        </Tabs>
+          {/* Allowlist */}
+          <Card className="bg-surface border-border">
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2 text-lg">
+                <CheckCircle2 className="h-5 w-5 text-green-500" />
+                Allowlist Patterns
+              </CardTitle>
+              <CardDescription>
+                Known-safe phrases to always allow (one per line)
+              </CardDescription>
+            </CardHeader>
+            <CardContent>
+              <Textarea
+                value={allowlist}
+                onChange={(e) => setAllowlist(e.target.value)}
+                placeholder="Enter safe phrases, one per line..."
+                className="font-mono text-sm min-h-[200px] bg-background"
+              />
+              <p className="text-xs text-muted-foreground mt-2">
+                {allowlist.split("\n").filter((line) => line.trim()).length} patterns defined
+              </p>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Action Buttons */}
+        <div className="flex items-center justify-end gap-4">
+          <Button variant="outline" onClick={handleReset} className="gap-2">
+            <RotateCcw className="h-4 w-4" />
+            Reset to Defaults
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={saveStatus === "saving"}
+            className="gap-2 bg-green-600 hover:bg-green-700"
+          >
+            {saveStatus === "saving" ? (
+              <>
+                <div className="h-4 w-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                Saving...
+              </>
+            ) : saveStatus === "saved" ? (
+              <>
+                <CheckCircle2 className="h-4 w-4" />
+                Saved!
+              </>
+            ) : (
+              <>
+                <Save className="h-4 w-4" />
+                Save Configuration
+              </>
+            )}
+          </Button>
+        </div>
       </div>
     </div>
   );
