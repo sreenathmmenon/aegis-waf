@@ -61,6 +61,40 @@ export interface ValidationResult {
   explanation?: Explanation;
   latencyMs: number;
   sessionId?: string;
+  outputGuard?: OutputGuardResult;
+}
+
+export interface OutputGuardResult {
+  safe: boolean;
+  decision: Decision;
+  confidence: number;
+  checks: {
+    dataLeakage: {
+      passed: boolean;
+      detected: boolean;
+      totalMatches: number;
+      highestSeverity: string;
+      details: string;
+    };
+    policyCompliance: {
+      passed: boolean;
+      compliant: boolean;
+      totalViolations: number;
+      highestSeverity: string;
+      details: string;
+    };
+    topicDrift: {
+      passed: boolean;
+      relevant: boolean;
+      similarityScore: number;
+      severity: string;
+      details: string;
+    };
+  };
+  overallSeverity: ThreatLevel;
+  redactedOutput?: string;
+  explanation: string;
+  latencyMs: number;
 }
 
 export interface ThreatLogEntry extends ValidationResult {
