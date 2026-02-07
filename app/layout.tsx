@@ -44,6 +44,12 @@ export default function RootLayout({
 
   return (
     <html lang="en">
+      <head>
+        <title>AEGIS - AI WAF for LLM Protection</title>
+        <meta name="description" content="Multi-layered AI firewall that detects prompt injection, validates outputs, monitors behavior, and explains every security decision." />
+        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+      </head>
       <body className="antialiased">
         <div className="flex h-screen bg-background">
           {/* Sidebar */}
