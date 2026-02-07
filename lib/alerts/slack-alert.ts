@@ -24,10 +24,6 @@ interface SlackMessage {
   blocks: SlackBlock[];
 }
 
-// Rate limiting: max 1 alert per 3 seconds
-let lastAlertTime = 0;
-const RATE_LIMIT_MS = 3000;
-
 /**
  * Send security alert to Slack
  */
@@ -35,13 +31,6 @@ export async function sendSlackAlert(
   validation: ValidationResult,
   outputGuard?: any
 ): Promise<void> {
-  // Check rate limit
-  const now = Date.now();
-  if (now - lastAlertTime < RATE_LIMIT_MS) {
-    console.log('⏱️ Slack alert rate limited');
-    return;
-  }
-
   // Only alert on BLOCK and FLAG
   if (validation.decision === 'ALLOW') {
     return;
@@ -52,8 +41,6 @@ export async function sendSlackAlert(
     console.log('ℹ️ SLACK_WEBHOOK_URL not set, skipping alert');
     return;
   }
-
-  lastAlertTime = now;
 
   // Build Slack message
   const emoji = validation.decision === 'BLOCK' ? '🔴' : '🟡';
