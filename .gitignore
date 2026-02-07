@@ -43,3 +43,9 @@ next-env.d.ts
 # claude code files (local development only)
 .claude/
 CLAUDE.md
+
+# backup and temporary files
+*.backup
+*.tmp
+*.temp
+*~
