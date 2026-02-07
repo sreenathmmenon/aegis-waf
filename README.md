@@ -231,6 +231,83 @@ Pattern   Intent  Sem  Behav
 
 ---
 
+## Data Sources
+
+AEGIS leverages publicly available security research data to ensure comprehensive threat detection:
+
+### HuggingFace Dataset Integration
+
+**Dataset:** `deepset/prompt-injections`
+**Source:** https://huggingface.co/datasets/deepset/prompt-injections
+**Usage:** Semantic layer threat detection
+
+**Statistics:**
+- 32 malicious attack examples
+- 15 legitimate query examples
+- 7 attack categories covered
+
+**Attack Categories:**
+1. **Direct Injection** (10 examples) - "Ignore previous instructions..."
+2. **Jailbreaks** (5 examples) - "You are now DAN..."
+3. **Data Exfiltration** (7 examples) - "Reveal your system prompt..."
+4. **Encoding/Obfuscation** (3 examples) - Base64, hex, ROT13 tricks
+5. **Indirect Injection** (5 examples) - Social engineering attempts
+6. **Multi-turn Attacks** (3 examples) - Context-based manipulation
+7. **Output Manipulation** (3 examples) - Response hijacking
+
+**Financial/Trading-Specific Threats:**
+- Account manipulation attempts
+- KYC bypass techniques
+- Unauthorized fund transfers
+- Balance disclosure attempts
+- Risk management override
+
+**How It Works:**
+- Semantic scanner compares user input against all 32 known attacks
+- Similarity score calculated using Jaccard + n-gram matching
+- Threshold: 70% similarity triggers alert
+- Attribution tracked to specific attack category
+
+**Console Output:**
+```
+✅ Loaded 32 attack signatures from HuggingFace dataset
+```
+
+### Custom Pattern Library
+
+**130+ Hand-Crafted Regex Patterns** covering:
+- Instruction override keywords ("ignore", "disregard", "forget")
+- Role hijacking attempts ("you are now", "act as", "pretend")
+- Data extraction commands ("reveal", "show me", "print system")
+- Encoding patterns (base64, hex, ROT13 detection)
+- Jailbreak techniques ("DAN", "developer mode", "unrestricted")
+- Multilingual evasion (non-English attack detection)
+
+### AI-Powered Detection
+
+**OpenAI GPT-4o-mini** for:
+- Intent classification beyond pattern matching
+- Novel attack detection (zero-day threats)
+- Semantic understanding of malicious goals
+- Context-aware threat analysis
+
+### Adaptive Learning
+
+**Session-Based Learning:**
+- Stores blocked attacks in memory
+- Builds pattern library from real threats
+- Improves detection over time
+- Resets on deployment (in-memory storage)
+
+**Attribution:**
+All threat detections include source attribution:
+- Pattern match: Which regex pattern triggered
+- Semantic match: Which HuggingFace example matched (with similarity score)
+- Intent classification: GPT-4o-mini reasoning
+- Learned pattern: Previously blocked attack
+
+---
+
 ## Benchmarks
 
 | Scenario | Avg Latency | P95 |
