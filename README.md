@@ -1,8 +1,10 @@
 # AEGIS - AI WAF for LLM Protection
 
+![AEGIS Title](docs/images/AEGIS-title.png)
+
 **Multi-layered AI firewall protecting LLM applications from prompt injection attacks**
 
-Enterprise-grade AI security solution for LLM applications
+_Named after the shield of Zeus & Athena in Greek mythology — divine protection for your AI_
 
 **Live Demo:** https://aegis-waf.vercel.app
 
@@ -28,11 +30,15 @@ AEGIS provides **defense in depth** for AI applications.
 
 ### 5-Layer Defense
 
+![5 Layers of Defense](docs/images/5layers.png)
+
 1. **Pattern Detection** (~2ms) - 130+ regex patterns, 7 attack categories
 2. **Intent Classification** (~50ms) - GPT-4o-mini semantic analysis
 3. **Semantic Analysis** (~5ms) - Similarity matching against 42 known attacks
 4. **Behavior Monitoring** - Session-based risk scoring
 5. **Output Validation** (~10ms) - PII detection, policy compliance, topic drift
+
+All input layers run in parallel for sub-500ms total latency.
 
 ### Real-Time Monitoring
 
@@ -179,6 +185,13 @@ async def validate(input: str):
 
 ## Architecture
 
+![Architecture Flow](docs/images/Architecture_flow.png)
+
+**Request Flow:**
+
+User Message → AEGIS 5 Layers (parallel execution) → Consensus Engine → Decision (ALLOW/FLAG/BLOCK) → LLM Processes → Output Guard
+
+**Technical Implementation:**
 ```
 User Input
     │
