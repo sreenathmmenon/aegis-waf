@@ -42,8 +42,8 @@ export default function LandingPage() {
 
             {/* Description */}
             <p className="text-base md:text-lg text-[#71717a] leading-relaxed mb-12 max-w-3xl mx-auto">
-              Stop prompt injection attacks before they reach your AI. Four parallel defense layers analyze every request,
-              block malicious inputs, and give you detailed explanations of what went wrong.
+              Stop prompt injection attacks before they reach your AI. Five parallel defense layers analyze every request,
+              block malicious inputs, validate outputs, and give you detailed explanations of what went wrong.
             </p>
 
             {/* CTA Buttons */}
@@ -66,7 +66,7 @@ export default function LandingPage() {
               <div className="flex items-center justify-center gap-6 md:gap-12 flex-wrap text-sm md:text-base text-[#71717a]">
                 <div className="flex items-center gap-2">
                   <Shield className="h-5 w-5 text-green-500" />
-                  <span>4 Defense Layers</span>
+                  <span>5 Defense Layers</span>
                 </div>
                 <div className="hidden sm:block text-[#1e1e2e]">•</div>
                 <div className="flex items-center gap-2">
@@ -104,12 +104,12 @@ export default function LandingPage() {
           >
             <h2 className="text-3xl md:text-4xl font-bold mb-6">How It Protects Your AI</h2>
             <p className="text-base md:text-lg text-[#71717a] max-w-3xl mx-auto leading-relaxed">
-              Four security layers run in parallel. Each layer checks the input independently,
-              then we combine their results to make a final decision.
+              Five security layers run in parallel. Four layers check the input independently,
+              then we validate the output. All results are combined to make a final decision.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 md:gap-8">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-6 md:gap-8">
             {/* Feature 1: Pattern Detection */}
             <Card className="bg-[#12121a] border border-[#1e1e2e] rounded-xl h-full hover:border-[#2e2e3e] transition-colors border-t-4 border-t-green-500/70">
                 <CardContent className="p-8">
@@ -162,6 +162,20 @@ export default function LandingPage() {
                   <p className="text-sm text-[#a1a1aa] leading-relaxed">
                     Tracks user sessions and builds a risk score over time. Identifies patterns
                     like repeated attack attempts or multi-step exploitation strategies.
+                  </p>
+                </CardContent>
+              </Card>
+
+            {/* Feature 5: Output Validation */}
+            <Card className="bg-[#12121a] border border-[#1e1e2e] rounded-xl h-full hover:border-[#2e2e3e] transition-colors border-t-4 border-t-teal-500/70">
+                <CardContent className="p-8">
+                  <div className="w-14 h-14 rounded-xl bg-teal-500/10 flex items-center justify-center mb-6">
+                    <CheckCircle2 className="h-7 w-7 text-teal-500" />
+                  </div>
+                  <h3 className="text-xl font-semibold mb-4">Output Validation</h3>
+                  <p className="text-sm text-[#a1a1aa] leading-relaxed">
+                    Scans AI responses for data leakage (PII, API keys), policy violations,
+                    and topic drift. Automatically redacts sensitive information before sending.
                   </p>
                 </CardContent>
               </Card>
@@ -248,17 +262,31 @@ export default function LandingPage() {
                 {/* Divider */}
                 <div className="my-12 border-t border-[#1e1e2e]"></div>
 
-                {/* Layer 4 and Decisions */}
+                {/* Layers 4 & 5 and Decisions */}
                 <div className="flex flex-col items-center text-center space-y-8">
-                  <Card className="bg-[#0a0a0f] border border-[#1e1e2e] rounded-xl p-8 max-w-md w-full">
-                    <div className="h-20 w-20 rounded-full bg-orange-500/10 border-2 border-orange-500/50 flex items-center justify-center mb-6 mx-auto">
-                      <span className="text-3xl font-bold text-orange-500">4</span>
-                    </div>
-                    <h3 className="font-semibold text-lg mb-3">Behavior Monitor</h3>
-                    <p className="text-sm text-[#71717a]">
-                      Session tracking and risk scoring
-                    </p>
-                  </Card>
+                  <div className="flex flex-col md:flex-row gap-6 items-center justify-center">
+                    <Card className="bg-[#0a0a0f] border border-[#1e1e2e] rounded-xl p-8 max-w-md w-full">
+                      <div className="h-20 w-20 rounded-full bg-orange-500/10 border-2 border-orange-500/50 flex items-center justify-center mb-6 mx-auto">
+                        <span className="text-3xl font-bold text-orange-500">4</span>
+                      </div>
+                      <h3 className="font-semibold text-lg mb-3">Behavior Monitor</h3>
+                      <p className="text-sm text-[#71717a]">
+                        Session tracking and risk scoring
+                      </p>
+                    </Card>
+
+                    <ArrowRight className="h-8 w-8 text-[#2e2e3e] rotate-90 md:rotate-0 flex-shrink-0" />
+
+                    <Card className="bg-[#0a0a0f] border border-[#1e1e2e] rounded-xl p-8 max-w-md w-full">
+                      <div className="h-20 w-20 rounded-full bg-teal-500/10 border-2 border-teal-500/50 flex items-center justify-center mb-6 mx-auto">
+                        <span className="text-3xl font-bold text-teal-500">5</span>
+                      </div>
+                      <h3 className="font-semibold text-lg mb-3">Output Guard</h3>
+                      <p className="text-sm text-[#71717a]">
+                        PII detection, policy checks ~10ms
+                      </p>
+                    </Card>
+                  </div>
 
                   <div className="flex gap-6 flex-wrap justify-center">
                     <span className="px-6 py-3 rounded-full bg-green-500/10 text-green-500 border-2 border-green-500/50 text-base font-bold">
