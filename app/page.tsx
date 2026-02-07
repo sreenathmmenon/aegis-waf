@@ -1,217 +1,214 @@
 "use client";
 
-import { motion } from "framer-motion";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { Shield, Zap, Bell, ArrowRight } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowRight, Shield, Zap, Bell } from "lucide-react";
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-[#0a0a0f]">
+    <div>
       {/* Hero */}
-      <section className="min-h-screen flex items-center px-8">
-        <div className="max-w-[1400px] mx-auto w-full">
-          <div className="grid lg:grid-cols-2 gap-32 items-center">
-            {/* Left */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6 }}
-            >
-              {/* Title */}
-              <h1 className="text-7xl font-bold text-white leading-[1.1] mb-10">
-                Stop Prompt Injection
-                <span className="block text-[#71717a] mt-3">Before It Reaches Your AI</span>
-              </h1>
+      <section style={{ paddingTop: "12vh", paddingBottom: "10vh" }}>
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", paddingLeft: 32, paddingRight: 32 }}>
+          <motion.h1
+            initial={{ opacity: 0, y: 24 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7 }}
+            style={{ fontSize: "clamp(36px, 5vw, 64px)", fontWeight: 700, lineHeight: 1.1, letterSpacing: "-0.04em", color: "#fff", textAlign: "center" }}
+          >
+            Stop Prompt Injection
+            <br />
+            <span className="text-gradient">Before It Reaches Your AI</span>
+          </motion.h1>
 
-              {/* Description - MUCH LARGER */}
-              <p className="text-2xl text-[#a1a1aa] leading-relaxed mb-16 max-w-xl">
-                Real-time firewall that protects LLM applications from malicious prompts, data leaks, and adversarial attacks.
-              </p>
+          <motion.p
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.12 }}
+            style={{ marginTop: 32, fontSize: 18, lineHeight: 1.7, color: "#a1a1aa", textAlign: "center", maxWidth: 520 }}
+          >
+            Real-time firewall that protects LLM applications from malicious prompts, data leaks, and adversarial attacks.
+          </motion.p>
 
-              {/* Buttons - MASSIVE and PREMIUM */}
-              <div className="flex gap-6 mb-24">
-                <Link href="/demo">
-                  <Button className="h-16 px-12 text-lg font-semibold bg-white text-black hover:bg-gray-100 rounded-lg shadow-lg">
-                    Try Live Demo
-                    <ArrowRight className="h-5 w-5 ml-3" />
-                  </Button>
-                </Link>
-                <Link href="/dashboard">
-                  <Button
-                    variant="outline"
-                    className="h-16 px-12 text-lg font-semibold border-2 border-[#3e3e4e] hover:bg-[#1a1a1a] rounded-lg"
-                  >
-                    Dashboard
-                  </Button>
-                </Link>
-              </div>
-
-              {/* Metrics - WAY DOWN with MASSIVE gap */}
-              <div className="grid grid-cols-3 gap-16">
-                <div>
-                  <div className="text-4xl font-bold text-white mb-3">&lt;500ms</div>
-                  <div className="text-lg text-[#71717a]">Response Time</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-white mb-3">5 Layers</div>
-                  <div className="text-lg text-[#71717a]">Defense System</div>
-                </div>
-                <div>
-                  <div className="text-4xl font-bold text-white mb-3">24/7</div>
-                  <div className="text-lg text-[#71717a]">Protection</div>
-                </div>
-              </div>
-            </motion.div>
-
-            {/* Right - Dashboard */}
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.6, delay: 0.2 }}
-              className="relative"
-            >
-              <div className="bg-[#12121a] border border-[#2e2e3e] rounded-2xl overflow-hidden shadow-2xl">
-                {/* Header */}
-                <div className="bg-[#0a0a0f] px-8 py-5 border-b border-[#2e2e3e] flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-3 w-3 bg-green-500 rounded-full animate-pulse"></div>
-                    <span className="text-base font-semibold text-white">ACTIVE</span>
-                  </div>
-                  <span className="text-sm text-[#71717a]">Last 24 hours</span>
-                </div>
-
-                {/* Stats */}
-                <div className="p-8 grid grid-cols-3 gap-6 border-b border-[#2e2e3e]">
-                  <div>
-                    <div className="text-sm text-[#71717a] mb-2">Total Scans</div>
-                    <div className="text-3xl font-bold text-white">1,247</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-[#71717a] mb-2">Blocked</div>
-                    <div className="text-3xl font-bold text-red-400">42</div>
-                  </div>
-                  <div>
-                    <div className="text-sm text-[#71717a] mb-2">Avg Time</div>
-                    <div className="text-3xl font-bold text-cyan-400">347ms</div>
-                  </div>
-                </div>
-
-                {/* Threats */}
-                <div className="p-8 space-y-4">
-                  <div className="text-sm font-semibold text-[#a1a1aa] mb-6">Recent Activity</div>
-
-                  <div className="bg-red-500/10 border border-red-500/30 rounded-xl p-5">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-bold text-red-400">BLOCKED</span>
-                      <span className="text-sm text-[#71717a]">2m ago</span>
-                    </div>
-                    <div className="text-base text-white">Ignore all previous instructions...</div>
-                  </div>
-
-                  <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-xl p-5">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-bold text-yellow-400">FLAGGED</span>
-                      <span className="text-sm text-[#71717a]">5m ago</span>
-                    </div>
-                    <div className="text-base text-white">Hypothetically, if you could...</div>
-                  </div>
-
-                  <div className="bg-green-500/10 border border-green-500/30 rounded-xl p-5">
-                    <div className="flex items-center justify-between mb-3">
-                      <span className="text-sm font-bold text-green-400">ALLOWED</span>
-                      <span className="text-sm text-[#71717a]">8m ago</span>
-                    </div>
-                    <div className="text-base text-white">What are trading hours for forex?</div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Floating notification */}
-              <motion.div
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.5, delay: 0.8 }}
-                className="absolute -bottom-8 -right-8 bg-[#12121a] border border-[#2e2e3e] rounded-xl p-6 shadow-2xl"
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.7, delay: 0.24 }}
+            style={{ marginTop: 48, display: "flex", alignItems: "center", justifyContent: "center", gap: 16, flexWrap: "wrap" as const }}
+          >
+            <Link href="/demo">
+              <span
+                className="inline-flex items-center justify-center font-semibold text-black bg-white hover:bg-[#e4e4e7] transition-colors cursor-pointer"
+                style={{
+                  height: 52,
+                  paddingLeft: 32,
+                  paddingRight: 32,
+                  borderRadius: 10,
+                  fontSize: 16,
+                  gap: 8,
+                }}
               >
-                <div className="flex items-start gap-4">
-                  <Bell className="h-6 w-6 text-cyan-400 flex-shrink-0 mt-1" />
-                  <div>
-                    <div className="text-base font-semibold text-white mb-1">Slack Alert Sent</div>
-                    <div className="text-sm text-[#71717a]">High severity threat detected</div>
-                  </div>
-                </div>
-              </motion.div>
-            </motion.div>
-          </div>
+                Try Live Demo
+                <ArrowRight style={{ width: 18, height: 18 }} />
+              </span>
+            </Link>
+            <Link href="/dashboard">
+              <span
+                className="inline-flex items-center justify-center font-medium text-[#a1a1aa] hover:text-white border border-[#2e2e3e] hover:border-[#52525b] bg-transparent hover:bg-white/[0.03] transition-colors cursor-pointer"
+                style={{
+                  height: 52,
+                  paddingLeft: 32,
+                  paddingRight: 32,
+                  borderRadius: 10,
+                  fontSize: 16,
+                }}
+              >
+                View Dashboard
+              </span>
+            </Link>
+          </motion.div>
         </div>
       </section>
 
-      {/* How It Works */}
-      <section className="px-8 py-48">
-        <div className="max-w-[1400px] mx-auto">
-          <div className="text-center mb-28">
-            <h2 className="text-6xl font-bold text-white mb-8">
+      {/* Stats */}
+      <section style={{ paddingTop: 80, paddingBottom: 80, paddingLeft: 32, paddingRight: 32 }}>
+        <div style={{ maxWidth: 960, margin: "0 auto" }}>
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.6, delay: 0.35 }}
+            style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 48, textAlign: "center" }}
+          >
+            {[
+              { value: "<500ms", label: "Response Time" },
+              { value: "5 Layers", label: "Defense System" },
+              { value: "24/7", label: "Real-time Protection" },
+            ].map((stat) => (
+              <div key={stat.label}>
+                <div
+                  style={{ fontSize: "clamp(28px, 3vw, 44px)", lineHeight: 1, fontWeight: 700, color: "#fff", letterSpacing: "-0.02em" }}
+                >
+                  {stat.value}
+                </div>
+                <div style={{ fontSize: 16, marginTop: 10, color: "#71717a" }}>
+                  {stat.label}
+                </div>
+              </div>
+            ))}
+          </motion.div>
+        </div>
+      </section>
+
+      {/* Divider */}
+      <div style={{ maxWidth: 960, margin: "0 auto", paddingLeft: 32, paddingRight: 32 }}>
+        <div style={{ borderTop: "1px solid #1e1e24" }} />
+      </div>
+
+      {/* How it works */}
+      <section style={{ paddingTop: 100, paddingBottom: 100, paddingLeft: 32, paddingRight: 32 }}>
+        <div style={{ maxWidth: 960, margin: "0 auto" }}>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-60px" }}
+            transition={{ duration: 0.5 }}
+            style={{ textAlign: "center", marginBottom: 80 }}
+          >
+            <h2
+              style={{ fontSize: "clamp(28px, 3vw, 44px)", fontWeight: 700, color: "#fff", letterSpacing: "-0.03em" }}
+            >
               How It Works
             </h2>
-            <p className="text-2xl text-[#71717a] max-w-3xl mx-auto">
-              Three-step protection running automatically on every request
+            <p style={{ fontSize: 18, marginTop: 16, maxWidth: 440, color: "#71717a", margin: "16px auto 0" }}>
+              Three steps. Every request. Under 500 milliseconds.
             </p>
-          </div>
+          </motion.div>
 
-          <div className="grid md:grid-cols-3 gap-16">
-            <div>
-              <div className="h-20 w-20 rounded-2xl bg-cyan-500/10 flex items-center justify-center mb-10">
-                <Shield className="h-10 w-10 text-cyan-400" />
-              </div>
-              <h3 className="text-3xl font-bold text-white mb-6">Detect</h3>
-              <p className="text-xl text-[#a1a1aa] leading-relaxed">
-                Five parallel layers analyze every prompt for injection attempts, jailbreaks, and data extraction.
-              </p>
-            </div>
-
-            <div>
-              <div className="h-20 w-20 rounded-2xl bg-red-500/10 flex items-center justify-center mb-10">
-                <Zap className="h-10 w-10 text-red-400" />
-              </div>
-              <h3 className="text-3xl font-bold text-white mb-6">Block</h3>
-              <p className="text-xl text-[#a1a1aa] leading-relaxed">
-                Malicious prompts are stopped instantly. Clean requests pass through in under 500ms.
-              </p>
-            </div>
-
-            <div>
-              <div className="h-20 w-20 rounded-2xl bg-green-500/10 flex items-center justify-center mb-10">
-                <Bell className="h-10 w-10 text-green-400" />
-              </div>
-              <h3 className="text-3xl font-bold text-white mb-6">Alert</h3>
-              <p className="text-xl text-[#a1a1aa] leading-relaxed">
-                Real-time Slack notifications with complete threat analysis and context.
-              </p>
-            </div>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 56 }}>
+            {[
+              {
+                icon: Shield,
+                title: "Detect",
+                desc: "Five parallel defense layers scan every prompt for injection patterns, role hijacking, and data extraction attempts.",
+              },
+              {
+                icon: Zap,
+                title: "Block",
+                desc: "Malicious requests are stopped before they reach your LLM. Clean requests pass through with zero added latency.",
+              },
+              {
+                icon: Bell,
+                title: "Alert",
+                desc: "Every decision is logged with full explainability. Get real-time alerts via Slack, webhook, or the dashboard.",
+              },
+            ].map((card, i) => {
+              const Icon = card.icon;
+              return (
+                <motion.div
+                  key={card.title}
+                  initial={{ opacity: 0, y: 20 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  viewport={{ once: true, margin: "-40px" }}
+                  transition={{ duration: 0.45, delay: i * 0.1 }}
+                  style={{ textAlign: "center" }}
+                >
+                  <div
+                    style={{ width: 56, height: 56, borderRadius: 16, marginBottom: 24, margin: "0 auto 24px", display: "flex", alignItems: "center", justifyContent: "center", background: "#12121a", border: "1px solid #2e2e3e" }}
+                  >
+                    <Icon style={{ width: 24, height: 24, color: "#34d399" }} />
+                  </div>
+                  <h3 style={{ fontSize: 20, marginBottom: 10, fontWeight: 600, color: "#fff" }}>
+                    {card.title}
+                  </h3>
+                  <p style={{ fontSize: 16, color: "#71717a", lineHeight: 1.65 }}>
+                    {card.desc}
+                  </p>
+                </motion.div>
+              );
+            })}
           </div>
         </div>
       </section>
 
       {/* CTA */}
-      <section className="px-8 py-48">
-        <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-6xl font-bold text-white mb-10">
-            Ready to Protect Your AI?
-          </h2>
-          <p className="text-2xl text-[#a1a1aa] mb-16 max-w-3xl mx-auto">
-            See AEGIS in action with live threat detection and real-time dashboard
-          </p>
-          <Link href="/demo">
-            <Button className="h-20 px-16 text-xl font-semibold bg-white text-black hover:bg-gray-100 rounded-xl shadow-xl">
-              Try Live Demo
-              <ArrowRight className="h-6 w-6 ml-4" />
-            </Button>
-          </Link>
+      <section style={{ paddingTop: 60, paddingBottom: 120, paddingLeft: 32, paddingRight: 32 }}>
+        <div style={{ maxWidth: 960, margin: "0 auto" }}>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: 0.5 }}
+            style={{ textAlign: "center", border: "1px solid #2e2e3e", background: "#12121a", borderRadius: 20, padding: "72px 40px" }}
+          >
+            <h2
+              style={{ fontSize: "clamp(26px, 2.8vw, 40px)", fontWeight: 700, color: "#fff", letterSpacing: "-0.03em" }}
+            >
+              Ready to Protect Your AI?
+            </h2>
+            <p style={{ fontSize: 17, marginTop: 14, maxWidth: 420, color: "#71717a", margin: "14px auto 0" }}>
+              Test with real attack payloads or explore the interactive security dashboard.
+            </p>
+            <div style={{ marginTop: 40 }}>
+              <Link href="/demo">
+                <span
+                  className="inline-flex items-center justify-center font-semibold text-black bg-white hover:bg-[#e4e4e7] transition-colors cursor-pointer"
+                  style={{
+                    height: 52,
+                    paddingLeft: 32,
+                    paddingRight: 32,
+                    borderRadius: 10,
+                    fontSize: 16,
+                    gap: 8,
+                  }}
+                >
+                  Get Started
+                  <ArrowRight style={{ width: 18, height: 18 }} />
+                </span>
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </section>
-
-      <div className="h-40" />
     </div>
   );
 }
