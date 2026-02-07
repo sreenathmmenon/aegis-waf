@@ -6,6 +6,7 @@ import { generateExplanation } from '@/lib/defense/explanationEngine';
 import { updateSession, getSessionRisk } from '@/lib/defense/behaviorMonitor';
 import { eventBus, createEventFromValidation } from '@/lib/event-bus';
 import { threatStore } from '@/lib/threat-store';
+import { sendSlackAlert } from '@/lib/alerts/slack-alert';
 import {
   ValidationResult,
   LayerResult,
@@ -207,6 +208,13 @@ export async function POST(request: NextRequest) {
     } catch (error) {
       console.error('Failed to publish event:', error);
       // Continue without event publishing
+    }
+
+    // Step 8: Send Slack alert for BLOCK/FLAG (fire and forget)
+    if (decision !== 'ALLOW') {
+      sendSlackAlert(validationResult).catch(err => {
+        console.error('Slack alert failed:', err);
+      });
     }
 
     // Return successful response

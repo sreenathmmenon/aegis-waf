@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { validateOutput } from '@/lib/layers/output-guard';
-import { OutputGuardResult } from '@/lib/types';
+import { scanOutput, OutputGuardResult } from '@/lib/layers/output-guard';
 
 interface OutputValidationRequest {
   input: string;
@@ -53,7 +52,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Run output validation
-    const result: OutputGuardResult = await validateOutput(input, output, config);
+    const result: OutputGuardResult = scanOutput(input, output);
 
     // Return result with proper headers
     return NextResponse.json(result, {
