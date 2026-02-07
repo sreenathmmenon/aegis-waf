@@ -40,13 +40,16 @@ AEGIS provides **defense in depth** for AI applications.
 
 All input layers run in parallel for sub-500ms total latency.
 
-### Real-Time Monitoring
+### Real-Time Monitoring & Alerts
 
-- Server-Sent Events (SSE) threat feed
-- Live dashboard with animated charts
-- Toast notifications for immediate alerts
-- Notification bell with unread badge
-- Automatic simulator for demo traffic
+![Slack Alert Example](docs/images/slack-notify.png)
+
+- **Slack Webhooks** - Instant threat notifications with full attack details
+- **Server-Sent Events (SSE)** - Real-time threat feed to dashboard
+- **Toast Notifications** - In-app alerts for blocked threats
+- **Notification Bell** - Unread badge with threat count
+- **Live Dashboard** - Animated charts and metrics
+- **Extensible** - Supports PagerDuty, Microsoft Teams, email, custom webhooks
 
 ---
 
